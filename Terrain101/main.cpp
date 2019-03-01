@@ -4,16 +4,30 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm\gtc\quaternion.hpp>
+#include <glm\gtx\quaternion.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 
 #include "HeightField.h"
+#include "Arcball.h"
 
 // settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+unsigned int SCR_WIDTH = 1024;
+unsigned int SCR_HEIGHT = 1024;
 
 glm::mat4 viewMat, projMat, modelmat;
 
-HeightField hField;
+HeightField         hField;
+Arcball             arcball;
+
+glm::ivec2                lastMousePosition;
+glm::quat                 qCRot = glm::quat(glm::mat4(1));
+glm::mat4                 rotMatrix = glm::mat4(1);
+glm::vec3                 camMovement;
+bool                      LEFT = false;
+bool                      RIGHT = false;
+glm::mat4                 objTrans;
 
 
 
@@ -25,6 +39,8 @@ static void Resize_Callback(GLFWwindow *pW, int w, int h)
   float aR = (float)w / (float)h;
 
   glViewport(0, 0, w, h);
+  SCR_WIDTH = w;
+  SCR_HEIGHT = h;
 }
 
 //---------------------------------------------------------------------
@@ -45,7 +61,26 @@ void init(void)
 //---------------------------------------------------------------------
 static void MouseButton_Callback(GLFWwindow *pW, int button, int action, int mods)
 {
+  glm::dvec2 vP;
 
+  glfwGetCursorPos(pW, &vP.x, &vP.y);
+  if (button == GLFW_MOUSE_BUTTON_1)
+  {
+    if (action == GLFW_PRESS)
+    {
+      arcball = Arcball(glm::vec2(SCR_WIDTH, SCR_HEIGHT), (vP.x - SCR_WIDTH / 2), -(vP.y - SCR_HEIGHT / 2), false);
+      LEFT = true;
+    }
+    else
+      LEFT = false;
+  }
+  if (button == GLFW_MOUSE_BUTTON_2)
+  {
+    if (action == GLFW_PRESS)
+      RIGHT = true;
+    else
+      RIGHT = false;
+  }
 }
 
 
@@ -54,7 +89,19 @@ static void MouseButton_Callback(GLFWwindow *pW, int button, int action, int mod
 //---------------------------------------------------------------------
 static void MouseMotion_Callback(GLFWwindow *pW, double x, double y)
 {
+  glm::dvec2 vP;
+  glm::quat rot = glm::quat();
 
+  glfwGetCursorPos(pW, &vP.x, &vP.y);
+
+  if (LEFT)
+  {
+    rot = arcball.update(glm::vec2(SCR_WIDTH, SCR_HEIGHT), (vP.x - SCR_WIDTH / 2), -(vP.y - SCR_HEIGHT / 2));
+    qCRot = rot * qCRot;
+    rotMatrix = glm::inverse(glm::toMat4(qCRot));
+  }
+
+  lastMousePosition = vP;
 }
 
 //---------------------------------------------------------------------
@@ -62,7 +109,7 @@ static void MouseMotion_Callback(GLFWwindow *pW, double x, double y)
 //---------------------------------------------------------------------
 static void MouseScroll_Callback(GLFWwindow *pW, double x, double y)
 {
-
+  camMovement = glm::vec3(0, 0, -0.1 * y);
 }
 
 //---------------------------------------------------------------------
@@ -98,8 +145,8 @@ void display(GLFWwindow *pWindow)
   {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(0.0f,0.0f,0.0f,1.0f);
-    glViewport(0, 0, 800, 600);
-    hField.render(viewMat, projMat);
+    glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+    hField.render(viewMat, projMat, rotMatrix);
 
     glFlush();
 
@@ -140,12 +187,12 @@ GLFWwindow* glInitWindow(const int &X, const int &Y, char *name)
 void setupCamera()
 {
   glm::vec3 lookFrom, lookAt, up;
-  lookFrom = glm::vec3(0,0,2000);
+  lookFrom = glm::vec3(0,0,5000);
   lookAt = glm::vec3(0,0,-1);
   up = glm::vec3(0,1,0);
   
   viewMat = glm::lookAt(lookFrom, lookAt, up);
-  projMat = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH/(float)SCR_HEIGHT, 0.01f, 5000.0f);
+  projMat = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH/(float)SCR_HEIGHT, 0.01f, 10000.0f);
 }
 
 
