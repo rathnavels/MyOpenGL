@@ -2,13 +2,26 @@
 
 #include "glad/glad.h"
 #include "GL/GL.h"
+#include "stb/stb_image.h"
 
 
 #include <iostream>
 #include <vector>
 
+class Vertex
+{
+public:
+ glm::vec3 vtx;
+ glm::vec3 clr;
 
-std::vector<glm::vec3> vertices;
+   Vertex(glm::vec3 v, glm::vec3 c)
+   {
+    vtx = v;
+    clr = c;
+   }
+};
+
+std::vector<Vertex> vertices;
 
 //---------------------------------------------------------------------
 // bound
@@ -45,12 +58,14 @@ bool HeightField::create(char *hFileName, int hX, int hZ)
   hmX = hX;
   hmZ = hZ;
 
+
+
   for (int hMapX = 0; hMapX < hX; hMapX++) 
   {
     for (int hMapZ = 0; hMapZ < hZ; hMapZ++) 
     {
-      vertices.push_back(glm::vec3(hMapX, hHeightField[hMapX][hMapZ], hMapZ));
-      bound(vertices.back());
+      vertices.push_back(Vertex(glm::vec3(hMapX, hHeightField[hMapX][hMapZ], hMapZ), glm::vec3((float)hHeightField[hMapX][hMapZ]/250, 0.2, 0.2)));
+      bound(vertices.back().vtx);
     }
   }
 
@@ -74,16 +89,47 @@ bool HeightField::create(char *hFileName, int hX, int hZ)
 
 
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size() , &vertices[0], GL_STATIC_DRAW);
 
   glEnableClientState(GL_VERTEX_ARRAY);
-  glVertexPointer(3, GL_FLOAT, sizeof(glm::vec3), 0);
+  glVertexPointer(3, GL_FLOAT, sizeof(Vertex), 0);
+
+  glEnableClientState(GL_COLOR_ARRAY);
+  glColorPointer(3, GL_FLOAT, sizeof(Vertex), (void*) sizeof(glm::vec3));
+
+  //glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * texCoords.size(), &texCoords[0], GL_STATIC_DRAW);
+
+  //glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+  //glTexCoordPointer(2, GL_FLOAT, sizeof(glm::vec2), 0);
   
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   glBindVertexArray(0);
 
   return true;
+}
+
+
+//---------------------------------------------------------------------
+// loadTexture
+//---------------------------------------------------------------------
+void HeightField::loadTexture(char *tFileName)
+{
+  std::string fPath;
+  char filePath[MAX_PATH];
+  
+  _getcwd(filePath, FILENAME_MAX);
+  fPath = std::string(filePath) + "/" + std::string(tFileName);
+
+  int w,h,n;
+  //stbi_uc *imgData = stbi_load(fPath.c_str(), &w, &h, &n, 3);
+
+  //glEnable(GL_TEXTURE_2D);  
+  //glBindTexture(GL_TEXTURE_2D, tID);
+
+
+  //glDisable(GL_TEXTURE_2D);
+    
 }
 
 
@@ -100,9 +146,8 @@ void HeightField::render(glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot)
   glMatrixMode(GL_MODELVIEW);
   glLoadMatrixf(glm::value_ptr( view * rot * _mDefaultTransform));
 
-  
+  glEnable(GL_COLOR);
   glBindVertexArray(VAO);
-  glColor3f(0.0,0.8,0.0);
   glDrawArrays(GL_POINTS, 0, vertices.size());
 
 

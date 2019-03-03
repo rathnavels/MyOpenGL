@@ -1,6 +1,8 @@
 #pragma once
 
 #include <Windows.h>
+#include <direct.h>
+#include <fstream>
 
 #define GL_FORCE_CTOR_INIT
 #include <glm/glm.hpp>
@@ -13,10 +15,13 @@ class HeightField
 private:
   int hmX, hmZ;
   unsigned int VBO, VAO;
+  unsigned int tID;
 
 public:
 
   bool create(char *hFileName, int hX, int hZ);
+
+  void loadTexture(char *tFileName);
 
   void render(glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot);
 

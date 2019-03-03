@@ -53,7 +53,8 @@ void init(void)
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
   glFrontFace(GL_CCW);
-  hField.create("heightfield.raw",1024,1024);
+  hField.create("Resources/heightfield.raw",1024,1024);
+  hField.loadTexture("Resources/texture.jpg");
 }
 
 //---------------------------------------------------------------------
