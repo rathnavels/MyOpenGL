@@ -59,14 +59,14 @@ bool HeightField::create(char *hFileName, int hX, int hZ)
 
   _mCentralizeTranslate = glm::translate(glm::mat4(1), -_vCen);
 
-  //if (oneOverRadius < 1.0f)
-  //  _mUnitScale = glm::scale(glm::mat4(), glm::vec3(oneOverRadius * 0.7));
-  //else
-  //  _mUnitScale = glm::scale(glm::mat4(), glm::vec3(_bndRadius * 1.4f));
+  if (oneOverRadius < 1.0f)
+    _mUnitScale = glm::scale(glm::mat4(1), glm::vec3(oneOverRadius * 0.7));
+  else
+    _mUnitScale = glm::scale(glm::mat4(1), glm::vec3(_bndRadius * 1.4f));
 
   _mDefaultTransform = _mUnitScale * _mCentralizeTranslate;
 
-  glPointSize(2.0);
+  glPointSize(1.0);
 
   glGenVertexArrays(1, &VAO);
   glGenBuffers(1, &VBO);

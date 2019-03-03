@@ -68,7 +68,7 @@ static void MouseButton_Callback(GLFWwindow *pW, int button, int action, int mod
   {
     if (action == GLFW_PRESS)
     {
-      arcball = Arcball(glm::vec2(SCR_WIDTH, SCR_HEIGHT), (vP.x - SCR_WIDTH / 2), -(vP.y - SCR_HEIGHT / 2), false);
+      arcball = Arcball(glm::vec2(SCR_WIDTH, SCR_HEIGHT), (vP.x - SCR_WIDTH / 2), (vP.y - SCR_HEIGHT / 2), true);
       LEFT = true;
     }
     else
@@ -96,9 +96,9 @@ static void MouseMotion_Callback(GLFWwindow *pW, double x, double y)
 
   if (LEFT)
   {
-    rot = arcball.update(glm::vec2(SCR_WIDTH, SCR_HEIGHT), (vP.x - SCR_WIDTH / 2), -(vP.y - SCR_HEIGHT / 2));
+    rot = arcball.update(glm::vec2(SCR_WIDTH, SCR_HEIGHT), (vP.x - SCR_WIDTH / 2), (vP.y - SCR_HEIGHT / 2));
     qCRot = rot * qCRot;
-    rotMatrix = glm::inverse(glm::toMat4(qCRot));
+    rotMatrix = (glm::toMat4(qCRot));
   }
 
   lastMousePosition = vP;
@@ -187,12 +187,12 @@ GLFWwindow* glInitWindow(const int &X, const int &Y, char *name)
 void setupCamera()
 {
   glm::vec3 lookFrom, lookAt, up;
-  lookFrom = glm::vec3(0,0,5000);
+  lookFrom = glm::vec3(0,0,-3);
   lookAt = glm::vec3(0,0,-1);
   up = glm::vec3(0,1,0);
   
   viewMat = glm::lookAt(lookFrom, lookAt, up);
-  projMat = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH/(float)SCR_HEIGHT, 0.01f, 10000.0f);
+  projMat = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH/(float)SCR_HEIGHT, 0.01f, 50.0f);
 }
 
 
