@@ -20,15 +20,30 @@ glm::mat4 viewMat, projMat, modelmat;
 
 HeightField         hField;
 Arcball             arcball;
+float               z = -2;
 
 glm::ivec2                lastMousePosition;
 glm::quat                 qCRot = glm::quat(glm::mat4(1));
 glm::mat4                 rotMatrix = glm::mat4(1);
-glm::vec3                 camMovement;
+glm::vec3                 camMovement = glm::vec3(0,0,0);
 bool                      LEFT = false;
 bool                      RIGHT = false;
 glm::mat4                 objTrans;
 
+//---------------------------------------------------------------------
+// setupCamera
+//---------------------------------------------------------------------
+static void setupCamera()
+{
+  glm::vec3 lookFrom, lookAt, up;
+  z = z + camMovement.z;
+  lookFrom = glm::vec3(0, 0, z);
+  lookAt = glm::vec3(0, 0, 0);
+  up = glm::vec3(0, 1, 0);
+
+  viewMat = glm::lookAt(lookFrom, lookAt, up);
+  projMat = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.01f, 50.0f);
+}
 
 
 //---------------------------------------------------------------------
@@ -41,6 +56,8 @@ static void Resize_Callback(GLFWwindow *pW, int w, int h)
   glViewport(0, 0, w, h);
   SCR_WIDTH = w;
   SCR_HEIGHT = h;
+
+  setupCamera();
 }
 
 //---------------------------------------------------------------------
@@ -110,7 +127,8 @@ static void MouseMotion_Callback(GLFWwindow *pW, double x, double y)
 //---------------------------------------------------------------------
 static void MouseScroll_Callback(GLFWwindow *pW, double x, double y)
 {
-  camMovement = glm::vec3(0, 0, -0.1 * y);
+  camMovement = glm::vec3(0, 0, 0.1 * y);
+  setupCamera();
 }
 
 //---------------------------------------------------------------------
@@ -182,19 +200,6 @@ GLFWwindow* glInitWindow(const int &X, const int &Y, char *name)
   return pW;
 }
 
-//---------------------------------------------------------------------
-// setupCamera
-//---------------------------------------------------------------------
-void setupCamera()
-{
-  glm::vec3 lookFrom, lookAt, up;
-  lookFrom = glm::vec3(0,0,-3);
-  lookAt = glm::vec3(0,0,-1);
-  up = glm::vec3(0,1,0);
-  
-  viewMat = glm::lookAt(lookFrom, lookAt, up);
-  projMat = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH/(float)SCR_HEIGHT, 0.01f, 50.0f);
-}
 
 
 //---------------------------------------------------------------------

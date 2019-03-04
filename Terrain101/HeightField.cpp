@@ -58,14 +58,20 @@ bool HeightField::create(char *hFileName, int hX, int hZ)
   hmX = hX;
   hmZ = hZ;
 
-
-
   for (int hMapX = 0; hMapX < hX; hMapX++) 
   {
     for (int hMapZ = 0; hMapZ < hZ; hMapZ++) 
     {
-      vertices.push_back(Vertex(glm::vec3(hMapX, hHeightField[hMapX][hMapZ], hMapZ), glm::vec3((float)hHeightField[hMapX][hMapZ]/250, 0.2, 0.2)));
+      vertices.push_back(Vertex(glm::vec3(hMapX, hHeightField[hMapX][hMapZ], hMapZ), glm::vec3((float)hHeightField[hMapX][hMapZ]/250, 0.2, 0.6)));
       bound(vertices.back().vtx);
+
+      //vertices.push_back(Vertex(glm::vec3(hMapX, hHeightField[hMapX][hMapZ], hMapZ),glm::vec3((float)hHeightField[hMapX][hMapZ] / 250,0.2,0.6)));
+      //bound(vertices.back().vtx);
+      //vertices.push_back(Vertex(glm::vec3(hMapX, hHeightField[hMapX][hMapZ + 1], hMapZ + 1), glm::vec3((float)hHeightField[hMapX][hMapZ+1] / 250, 0.2, 0.6)));
+      //bound(vertices.back().vtx);
+      //vertices.push_back(Vertex(glm::vec3(hMapX + 1, hHeightField[hMapX+1][hMapZ], hMapZ), glm::vec3((float)hHeightField[hMapX+1][hMapZ] / 250, 0.2, 0.6)));
+      //bound(vertices.back().vtx);
+      //vertices.push_back(Vertex(glm::vec3(hMapX + 1, hHeightField[hMapX+1][hMapZ+1], hMapZ+1), glm::vec3((float)hHeightField[hMapX+1][hMapZ+1] / 250, 0.2, 0.6)));
     }
   }
 
@@ -82,6 +88,7 @@ bool HeightField::create(char *hFileName, int hX, int hZ)
   _mDefaultTransform = _mUnitScale * _mCentralizeTranslate;
 
   glPointSize(1.0);
+  //glDepthFunc(GL_LEQUAL);
 
   glGenVertexArrays(1, &VAO);
   glGenBuffers(1, &VBO);
