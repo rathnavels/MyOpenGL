@@ -15,6 +15,7 @@ class HeightField
 private:
   int hmX, hmZ;
   unsigned int VBO, VAO;
+  unsigned int IBO;
   unsigned int tID;
 
 public:

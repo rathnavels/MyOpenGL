@@ -22,6 +22,9 @@ public:
 };
 
 std::vector<Vertex> vertices;
+std::vector<GLuint> indices;
+
+int polling = 2;
 
 //---------------------------------------------------------------------
 // bound
@@ -64,16 +67,25 @@ bool HeightField::create(char *hFileName, int hX, int hZ)
     {
       vertices.push_back(Vertex(glm::vec3(hMapX, hHeightField[hMapX][hMapZ], hMapZ), glm::vec3((float)hHeightField[hMapX][hMapZ]/250, 0.2, 0.6)));
       bound(vertices.back().vtx);
-
-      //vertices.push_back(Vertex(glm::vec3(hMapX, hHeightField[hMapX][hMapZ], hMapZ),glm::vec3((float)hHeightField[hMapX][hMapZ] / 250,0.2,0.6)));
-      //bound(vertices.back().vtx);
-      //vertices.push_back(Vertex(glm::vec3(hMapX, hHeightField[hMapX][hMapZ + 1], hMapZ + 1), glm::vec3((float)hHeightField[hMapX][hMapZ+1] / 250, 0.2, 0.6)));
-      //bound(vertices.back().vtx);
-      //vertices.push_back(Vertex(glm::vec3(hMapX + 1, hHeightField[hMapX+1][hMapZ], hMapZ), glm::vec3((float)hHeightField[hMapX+1][hMapZ] / 250, 0.2, 0.6)));
-      //bound(vertices.back().vtx);
-      //vertices.push_back(Vertex(glm::vec3(hMapX + 1, hHeightField[hMapX+1][hMapZ+1], hMapZ+1), glm::vec3((float)hHeightField[hMapX+1][hMapZ+1] / 250, 0.2, 0.6)));
     }
   }
+
+  for (int hMapX = 0; hMapX < hX - polling; hMapX+= polling)
+  {
+    for (int hMapZ = 0; hMapZ < hZ; hMapZ+= polling)
+    {
+      indices.push_back(hMapX * hZ + hMapZ);
+
+      if (hMapZ == 0 && hMapX != 0)
+        indices.push_back(indices.back());
+
+      indices.push_back(hMapZ + (hMapX + polling)*hZ);
+
+      if (hMapZ >= hZ - polling)
+        indices.push_back(indices.back());
+    }
+  }
+  
 
   float oneOverRadius = 1.0f / _bndRadius;
 
@@ -88,15 +100,19 @@ bool HeightField::create(char *hFileName, int hX, int hZ)
   _mDefaultTransform = _mUnitScale * _mCentralizeTranslate;
 
   glPointSize(1.0);
-  //glDepthFunc(GL_LEQUAL);
+  glDepthFunc(GL_LEQUAL);
 
   glGenVertexArrays(1, &VAO);
   glGenBuffers(1, &VBO);
+  glGenBuffers(1, &IBO);
   glBindVertexArray(VAO);
 
 
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
   glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size() , &vertices[0], GL_STATIC_DRAW);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * indices.size(), &indices[0], GL_STATIC_DRAW);
 
   glEnableClientState(GL_VERTEX_ARRAY);
   glVertexPointer(3, GL_FLOAT, sizeof(Vertex), 0);
@@ -155,7 +171,11 @@ void HeightField::render(glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot)
 
   glEnable(GL_COLOR);
   glBindVertexArray(VAO);
-  glDrawArrays(GL_POINTS, 0, vertices.size());
+  
+  //glDrawArrays(GL_POINTS, 0, vertices.size());
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+  glDrawElements(GL_TRIANGLE_STRIP, indices.size(), GL_UNSIGNED_INT, (void*)0);
 
 
 }

@@ -13,8 +13,8 @@
 #include "Arcball.h"
 
 // settings
-unsigned int SCR_WIDTH = 1024;
-unsigned int SCR_HEIGHT = 1024;
+unsigned int SCR_WIDTH = 1800;
+unsigned int SCR_HEIGHT = 1800;
 
 glm::mat4 viewMat, projMat, modelmat;
 
@@ -69,7 +69,8 @@ void init(void)
   glEnable(GL_TEXTURE_2D);
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
-  glFrontFace(GL_CCW);
+  glFrontFace(GL_CW);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   hField.create("Resources/heightfield.raw",1024,1024);
   hField.loadTexture("Resources/texture.jpg");
 }
@@ -127,7 +128,7 @@ static void MouseMotion_Callback(GLFWwindow *pW, double x, double y)
 //---------------------------------------------------------------------
 static void MouseScroll_Callback(GLFWwindow *pW, double x, double y)
 {
-  camMovement = glm::vec3(0, 0, 0.1 * y);
+  camMovement = glm::vec3(0, 0, 0.02 * y);
   setupCamera();
 }
 
