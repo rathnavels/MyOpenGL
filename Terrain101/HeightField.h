@@ -3,18 +3,23 @@
 #include <Windows.h>
 #include <direct.h>
 #include <fstream>
+#include <vector>
 
 #define GL_FORCE_CTOR_INIT
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
 
-
+//---------------------------------------------------------------------
+// HeightField class
+//---------------------------------------------------------------------
 class HeightField
 {
 private:
-  int hmX, hmZ;
-  unsigned int VBO, VAO;
+  int hmX;
+  int hmZ;
+  unsigned int VBO;
+  unsigned int VAO;
   unsigned int IBO;
   unsigned int tID;
 
@@ -26,6 +31,10 @@ public:
 
   void render(glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot);
 
+  void bound(const glm::vec3 &v);
+
+  void determine();
+
   glm::vec3           _vMin;                            ///<    Min Vertex
   glm::vec3           _vMax;                            ///<    Max Vertex
   glm::vec3           _vCen;                            ///<    VertexLst center vertex
@@ -35,9 +44,6 @@ public:
   glm::mat4           _mCentralizeTranslate;
   glm::mat4           _mUnitScale;
   glm::mat4           _mDefaultTransform;
-
-  void bound(const glm::vec3 &v);
-  void determine();
 
   BYTE hHeightField[1024][1024];
 
@@ -51,5 +57,21 @@ public:
                       _mDefaultTransform(glm::mat4(1))
                     {}
  
+};
+
+//---------------------------------------------------------------------
+// VertexClass
+//---------------------------------------------------------------------
+class Vertex
+{
+public:
+  glm::vec3 vtx;
+  glm::vec3 clr;
+
+  Vertex(glm::vec3 v, glm::vec3 c)
+  {
+    vtx = v;
+    clr = c;
+  }
 };
 

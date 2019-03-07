@@ -6,25 +6,12 @@
 
 
 #include <iostream>
-#include <vector>
-
-class Vertex
-{
-public:
- glm::vec3 vtx;
- glm::vec3 clr;
-
-   Vertex(glm::vec3 v, glm::vec3 c)
-   {
-    vtx = v;
-    clr = c;
-   }
-};
+#include <fstream>
 
 std::vector<Vertex> vertices;
 std::vector<GLuint> indices;
 
-int polling = 2;
+int polling = 8;
 
 //---------------------------------------------------------------------
 // bound
@@ -86,7 +73,6 @@ bool HeightField::create(char *hFileName, int hX, int hZ)
     }
   }
   
-
   float oneOverRadius = 1.0f / _bndRadius;
 
 
@@ -119,14 +105,9 @@ bool HeightField::create(char *hFileName, int hX, int hZ)
 
   glEnableClientState(GL_COLOR_ARRAY);
   glColorPointer(3, GL_FLOAT, sizeof(Vertex), (void*) sizeof(glm::vec3));
-
-  //glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * texCoords.size(), &texCoords[0], GL_STATIC_DRAW);
-
-  //glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-  //glTexCoordPointer(2, GL_FLOAT, sizeof(glm::vec2), 0);
   
   glBindBuffer(GL_ARRAY_BUFFER, 0);
-
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 
   return true;
@@ -143,16 +124,6 @@ void HeightField::loadTexture(char *tFileName)
   
   _getcwd(filePath, FILENAME_MAX);
   fPath = std::string(filePath) + "/" + std::string(tFileName);
-
-  int w,h,n;
-  //stbi_uc *imgData = stbi_load(fPath.c_str(), &w, &h, &n, 3);
-
-  //glEnable(GL_TEXTURE_2D);  
-  //glBindTexture(GL_TEXTURE_2D, tID);
-
-
-  //glDisable(GL_TEXTURE_2D);
-    
 }
 
 
@@ -165,18 +136,15 @@ void HeightField::render(glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot)
   glMatrixMode(GL_PROJECTION);
   glLoadMatrixf(glm::value_ptr(proj));
 
-
   glMatrixMode(GL_MODELVIEW);
   glLoadMatrixf(glm::value_ptr( view * rot * _mDefaultTransform));
 
   glEnable(GL_COLOR);
   glBindVertexArray(VAO);
-  
-  //glDrawArrays(GL_POINTS, 0, vertices.size());
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
   glDrawElements(GL_TRIANGLE_STRIP, indices.size(), GL_UNSIGNED_INT, (void*)0);
 
-
+  
 }
 
