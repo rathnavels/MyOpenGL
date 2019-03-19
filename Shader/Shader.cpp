@@ -29,6 +29,9 @@ bool Shader::compileShaderFromFile(const char *filename, GLSLShader::GLSLShaderT
   shaderFile.close();
 
   code = shaderStream.str();
+
+    if (handle <= 0) 
+        handle = glCreateProgram();
   
   GLuint shaderHandle = glCreateShader(type);
   const char *c_code = code.c_str();

@@ -81,11 +81,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\GoogleDrive\MyLibs\include\glad\include;C:\GoogleDrive\MyLibs\include;$(SolutionDir)\Utility</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\GoogleDrive\MyLibs\include\glad\include;C:\GoogleDrive\MyLibs\include;$(SolutionDir)\Utility;$(SolutionDir)\Shader</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\GoogleDrive\MyLibs\libs\glfw;$(SolutionDir)\Utilities;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\GoogleDrive\MyLibs\libs\glfw;$(SolutionDir)\Utilities;$(SolutionDir)\Shader;$(SolutionDir)\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;Shader.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -108,13 +108,13 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\GoogleDrive\MyLibs\include\glad\include;C:\GoogleDrive\MyLibs\include;$(SolutionDir)\Utility</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\GoogleDrive\MyLibs\include\glad\include;C:\GoogleDrive\MyLibs\include;$(SolutionDir)\Utility;$(SolutionDir)\Shader</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\GoogleDrive\MyLibs\libs\glfw;$(SolutionDir)\Utilities;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\GoogleDrive\MyLibs\libs\glfw;$(SolutionDir)\Utilities;$(SolutionDir)\Shader;$(SolutionDir)\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;Shader.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

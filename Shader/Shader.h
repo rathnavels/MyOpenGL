@@ -1,3 +1,5 @@
+#pragma once
+
 #include<iostream>
 
 #include <glm/glm.hpp>
@@ -59,5 +61,9 @@ class Shader
     void bindFragDataLocation(uint16_t location, const char *name );
 
     Shader(const char *vS, const char *fS);
+
+    Shader(void){}
+
+    ~Shader(){}
     
 };

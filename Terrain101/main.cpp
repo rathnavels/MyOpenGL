@@ -11,6 +11,7 @@
 
 #include "HeightField.h"
 #include "Arcball.h"
+#include "Shader.h"
 
 // settings
 unsigned int SCR_WIDTH = 1800;
@@ -18,17 +19,19 @@ unsigned int SCR_HEIGHT = 1800;
 
 glm::mat4 viewMat, projMat, modelmat;
 
-HeightField         hField;
-Arcball             arcball;
-float               z = -2;
+HeightField      hField;
+Arcball          arcball;
+Shader          *prog = new Shader();
 
-glm::ivec2                lastMousePosition;
-glm::quat                 qCRot = glm::quat(glm::mat4(1));
-glm::mat4                 rotMatrix = glm::mat4(1);
-glm::vec3                 camMovement = glm::vec3(0,0,0);
-bool                      LEFT = false;
-bool                      RIGHT = false;
-glm::mat4                 objTrans;
+float            z                     = -2;
+glm::quat        qCRot                 = glm::quat(glm::mat4(1));
+glm::mat4        rotMatrix             = glm::mat4(1);
+glm::vec3        camMovement           = glm::vec3(0,0,0);
+bool             LEFT                  = false;
+bool             RIGHT                 = false;
+glm::ivec2       lastMousePosition;
+glm::mat4        objTrans;
+
 
 //---------------------------------------------------------------------
 // setupCamera
@@ -65,6 +68,12 @@ static void Resize_Callback(GLFWwindow *pW, int w, int h)
 //---------------------------------------------------------------------
 void init(void)
 {
+  prog->compileShaderFromFile("glsl/shader.vert",GLSLShader::GLSLShaderType::VERTEX);
+  prog->compileShaderFromFile("glsl/shader.frag",GLSLShader::GLSLShaderType::FRAGMENT);
+      
+  prog->link();
+  prog->use();
+  
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_TEXTURE_2D);
   glEnable(GL_CULL_FACE);
@@ -165,8 +174,9 @@ void display(GLFWwindow *pWindow)
   {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(0.0f,0.0f,0.0f,1.0f);
+    glColor3f(0,1,0);
     glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-    hField.render(viewMat, projMat, rotMatrix);
+    hField.render(prog, viewMat, projMat, rotMatrix);
 
     glFlush();
 

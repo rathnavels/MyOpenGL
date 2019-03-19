@@ -9,6 +9,8 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
+#include "Shader.h"
+
 
 //---------------------------------------------------------------------
 // HeightField class
@@ -30,6 +32,8 @@ public:
   void loadTexture(char *tFileName);
 
   void render(glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot);
+
+  void render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot);
 
   void bound(const glm::vec3 &v);
 

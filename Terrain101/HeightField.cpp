@@ -100,11 +100,21 @@ bool HeightField::create(char *hFileName, int hX, int hZ)
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * indices.size(), &indices[0], GL_STATIC_DRAW);
 
+#ifdef FIXED
+
   glEnableClientState(GL_VERTEX_ARRAY);
   glVertexPointer(3, GL_FLOAT, sizeof(Vertex), 0);
 
   glEnableClientState(GL_COLOR_ARRAY);
   glColorPointer(3, GL_FLOAT, sizeof(Vertex), (void*) sizeof(glm::vec3));
+
+#endif
+
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) sizeof(glm::vec3));
   
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -132,7 +142,6 @@ void HeightField::loadTexture(char *tFileName)
 //---------------------------------------------------------------------
 void HeightField::render(glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot)
 {
-
   glMatrixMode(GL_PROJECTION);
   glLoadMatrixf(glm::value_ptr(proj));
 
@@ -145,6 +154,24 @@ void HeightField::render(glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot)
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
   glDrawElements(GL_TRIANGLE_STRIP, indices.size(), GL_UNSIGNED_INT, (void*)0);
 
+  
+}
+
+//---------------------------------------------------------------------
+// render
+//---------------------------------------------------------------------
+void HeightField::render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot)
+{
+  glm::mat4 mMVP = proj * view * rot * _mDefaultTransform;
+
+  prog->use();
+  prog->setUniform("mMVP", mMVP);
+
+  glEnable(GL_COLOR);
+  glBindVertexArray(VAO);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+  glDrawElements(GL_TRIANGLE_STRIP, indices.size(), GL_UNSIGNED_INT, (void*)0);
   
 }
 
