@@ -18,6 +18,11 @@ bool Shader::compileShaderFromFile(const char *filename, GLSLShader::GLSLShaderT
   // Load and Compile
   if(fileExists(filename))
     shaderFile.open(filename);
+  else
+  {
+    std::cerr << "File Not found\n";
+    return false;
+  }
 
   std::stringstream shaderStream;
   shaderStream << shaderFile.rdbuf();
