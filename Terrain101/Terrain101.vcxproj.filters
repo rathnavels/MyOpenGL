@@ -37,5 +37,11 @@
     <None Include="..\glsl\shader.vert">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\glsl\shader.tessC">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\glsl\shader.tessE">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

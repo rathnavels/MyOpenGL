@@ -11,7 +11,7 @@
 std::vector<Vertex> vertices;
 std::vector<GLuint> indices;
 
-#define RENDERMODE_SWITCH
+//#define RENDERMODE_SWITCH
 
 #ifdef RENDERMODE_SWITCH
   #define RENMODE_TRIANGLE_STRIP
@@ -19,7 +19,7 @@ std::vector<GLuint> indices;
   #undef RENMODE_TRIANGLE_STRIP
 #endif
 
-int polling = 12;
+int polling = 16;
 
 //---------------------------------------------------------------------
 // bound
@@ -101,7 +101,7 @@ bool HeightField::create(char *hFileName, int hX, int hZ)
     }
   }
 #else
-  _renMode = GL_QUADS;
+  _renMode = GL_PATCHES;
     
   for (int hMapX = 0; hMapX < hX-polling; hMapX+= polling)
   {
@@ -201,8 +201,13 @@ void HeightField::render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::ma
   prog->use();
   prog->setUniform("mMVP", mMVP);
 
+  prog->setUniform("Outer", 4);
+  prog->setUniform("Inner", 4);
+
   glEnable(GL_COLOR);
   glBindVertexArray(VAO);
+
+  glPatchParameteri(GL_PATCH_VERTICES,4);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
   glDrawElements(_renMode, indices.size(), GL_UNSIGNED_INT, (void*)0);

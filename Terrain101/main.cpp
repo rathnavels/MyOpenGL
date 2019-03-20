@@ -68,8 +68,10 @@ static void Resize_Callback(GLFWwindow *pW, int w, int h)
 //---------------------------------------------------------------------
 void init(void)
 {
-  prog->compileShaderFromFile("glsl/shader.vert",GLSLShader::GLSLShaderType::VERTEX);
-  prog->compileShaderFromFile("glsl/shader.frag",GLSLShader::GLSLShaderType::FRAGMENT);
+  prog->compileShaderFromFile("glsl/shader.vert",   GLSLShader::GLSLShaderType::VERTEX);
+  prog->compileShaderFromFile("glsl/shader.frag",   GLSLShader::GLSLShaderType::FRAGMENT);
+  prog->compileShaderFromFile("glsl/shader.tessC",  GLSLShader::GLSLShaderType::TESS_CONTROL);
+  prog->compileShaderFromFile("glsl/shader.tessE",  GLSLShader::GLSLShaderType::TESS_EVAL);
       
   prog->link();
   prog->use();

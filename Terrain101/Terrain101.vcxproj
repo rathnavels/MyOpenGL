@@ -132,6 +132,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\glsl\shader.frag" />
+    <None Include="..\glsl\shader.tessC" />
+    <None Include="..\glsl\shader.tessE" />
     <None Include="..\glsl\shader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
