@@ -29,8 +29,11 @@ glm::mat4        rotMatrix             = glm::mat4(1);
 glm::vec3        camMovement           = glm::vec3(0,0,0);
 bool             LEFT                  = false;
 bool             RIGHT                 = false;
+int              tessLevel             = 1;
 glm::ivec2       lastMousePosition;
 glm::mat4        objTrans;
+
+
 
 
 //---------------------------------------------------------------------
@@ -149,7 +152,20 @@ static void MouseScroll_Callback(GLFWwindow *pW, double x, double y)
 //---------------------------------------------------------------------
 static void Keyboard_Callback(GLFWwindow *pW, int key, int scancode, int action, int mods)
 {
+    if(key == GLFW_KEY_UP)
+    {
+      tessLevel++;
 
+      if(tessLevel == 9)
+        tessLevel = 1;
+    }
+    else if(key == GLFW_KEY_DOWN)
+    {
+      tessLevel--;
+      
+      if(tessLevel == 0)
+        tessLevel = 8;
+    }
 }
 
 //---------------------------------------------------------------------
@@ -179,7 +195,7 @@ void display(GLFWwindow *pWindow)
     glClearColor(0.0f,0.0f,0.0f,1.0f);
     glColor3f(0,1,0);
     glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-    hField.render(prog, viewMat, projMat, rotMatrix);
+    hField.render(prog, viewMat, projMat, rotMatrix, tessLevel, tessLevel);
 
     glFlush();
 

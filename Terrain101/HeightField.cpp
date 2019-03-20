@@ -19,7 +19,7 @@ std::vector<GLuint> indices;
   #undef RENMODE_TRIANGLE_STRIP
 #endif
 
-int polling = 16;
+int polling = 32;
 
 //---------------------------------------------------------------------
 // bound
@@ -194,15 +194,15 @@ void HeightField::render(glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot)
 //---------------------------------------------------------------------
 // render
 //---------------------------------------------------------------------
-void HeightField::render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot)
+void HeightField::render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot, int outer, int inner)
 {
   glm::mat4 mMVP = proj * view * rot * _mDefaultTransform;
 
   prog->use();
   prog->setUniform("mMVP", mMVP);
 
-  prog->setUniform("Outer", 4);
-  prog->setUniform("Inner", 4);
+  prog->setUniform("Outer", outer);
+  prog->setUniform("Inner", inner);
 
   glEnable(GL_COLOR);
   glBindVertexArray(VAO);

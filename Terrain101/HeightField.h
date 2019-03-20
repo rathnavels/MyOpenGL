@@ -33,7 +33,7 @@ public:
 
   void render(glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot);
 
-  void render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot);
+  void render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot, int outerTess = 2, int innerTess = 2);
 
   void bound(const glm::vec3 &v);
 
