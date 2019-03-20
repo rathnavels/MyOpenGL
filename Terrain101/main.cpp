@@ -78,8 +78,9 @@ void init(void)
   glEnable(GL_TEXTURE_2D);
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
-  glFrontFace(GL_CW);
+  glFrontFace(GL_CCW);
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
   hField.create("Resources/heightfield.raw",1024,1024);
   hField.loadTexture("Resources/texture.jpg");
 }

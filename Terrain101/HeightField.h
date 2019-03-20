@@ -39,11 +39,17 @@ public:
 
   void determine();
 
+  void calculateCenterTransform();
+
+  void cacheToGPU();
+
   glm::vec3           _vMin;                            ///<    Min Vertex
   glm::vec3           _vMax;                            ///<    Max Vertex
   glm::vec3           _vCen;                            ///<    VertexLst center vertex
   glm::vec3           _vFW;                             ///<    View volume full width
   float               _bndRadius;                       ///<    Bounding Radius
+
+  GLuint              _renMode;
 
   glm::mat4           _mCentralizeTranslate;
   glm::mat4           _mUnitScale;

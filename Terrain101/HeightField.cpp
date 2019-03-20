@@ -11,7 +11,15 @@
 std::vector<Vertex> vertices;
 std::vector<GLuint> indices;
 
-int polling = 8;
+#define RENDERMODE_SWITCH
+
+#ifdef RENDERMODE_SWITCH
+  #define RENMODE_TRIANGLE_STRIP
+#else
+  #undef RENMODE_TRIANGLE_STRIP
+#endif
+
+int polling = 12;
 
 //---------------------------------------------------------------------
 // bound
@@ -32,6 +40,23 @@ void  HeightField::bound(const glm::vec3 &v)
   _vMax = glm::max(_vMax, v);
 
   determine();
+}
+
+//---------------------------------------------------------------------
+// calculateCenterTransform
+//---------------------------------------------------------------------
+void HeightField::calculateCenterTransform()
+{
+  float oneOverRadius = 1.0f / _bndRadius;
+
+  _mCentralizeTranslate = glm::translate(glm::mat4(1), -_vCen);
+
+  if (oneOverRadius < 1.0f)
+    _mUnitScale = glm::scale(glm::mat4(1), glm::vec3(oneOverRadius * 0.7));
+  else
+    _mUnitScale = glm::scale(glm::mat4(1), glm::vec3(_bndRadius * 1.4f));
+
+  _mDefaultTransform = _mUnitScale * _mCentralizeTranslate;
 }
 
 
@@ -57,42 +82,54 @@ bool HeightField::create(char *hFileName, int hX, int hZ)
     }
   }
 
+#ifdef RENMODE_TRIANGLE_STRIP
+  _renMode = GL_TRIANGLE_STRIP;
+
   for (int hMapX = 0; hMapX < hX - polling; hMapX+= polling)
   {
     for (int hMapZ = 0; hMapZ < hZ; hMapZ+= polling)
     {
-      indices.push_back(hMapX * hZ + hMapZ);
+      indices.push_back(hMapZ + (hMapX + polling)*hZ);
 
       if (hMapZ == 0 && hMapX != 0)
         indices.push_back(indices.back());
 
-      indices.push_back(hMapZ + (hMapX + polling)*hZ);
+      indices.push_back(hMapX * hZ + hMapZ);
 
       if (hMapZ >= hZ - polling)
-        indices.push_back(indices.back());
+          indices.push_back(indices.back());
     }
   }
+#else
+  _renMode = GL_QUADS;
+    
+  for (int hMapX = 0; hMapX < hX-polling; hMapX+= polling)
+  {
+    for (int hMapZ = 0; hMapZ < hZ-polling; hMapZ+= polling)
+    {
+       indices.push_back(hMapX * hZ + hMapZ);
+       indices.push_back(hMapX * hZ + hMapZ + polling);
+       indices.push_back(hMapX * hZ + (hX * polling) + hMapZ + polling );
+       indices.push_back(hMapX * hZ + (hX * polling) + hMapZ );
+    }
+  }
+#endif
   
-  float oneOverRadius = 1.0f / _bndRadius;
+  calculateCenterTransform();
+  cacheToGPU();
 
+  return true;
+}
 
-  _mCentralizeTranslate = glm::translate(glm::mat4(1), -_vCen);
-
-  if (oneOverRadius < 1.0f)
-    _mUnitScale = glm::scale(glm::mat4(1), glm::vec3(oneOverRadius * 0.7));
-  else
-    _mUnitScale = glm::scale(glm::mat4(1), glm::vec3(_bndRadius * 1.4f));
-
-  _mDefaultTransform = _mUnitScale * _mCentralizeTranslate;
-
-  glPointSize(1.0);
-  glDepthFunc(GL_LEQUAL);
-
+//---------------------------------------------------------------------
+// loadTexture
+//---------------------------------------------------------------------
+void HeightField::cacheToGPU()
+{
   glGenVertexArrays(1, &VAO);
   glGenBuffers(1, &VBO);
   glGenBuffers(1, &IBO);
   glBindVertexArray(VAO);
-
 
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
   glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size() , &vertices[0], GL_STATIC_DRAW);
@@ -120,7 +157,6 @@ bool HeightField::create(char *hFileName, int hX, int hZ)
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 
-  return true;
 }
 
 
@@ -152,9 +188,7 @@ void HeightField::render(glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot)
   glBindVertexArray(VAO);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-  glDrawElements(GL_TRIANGLE_STRIP, indices.size(), GL_UNSIGNED_INT, (void*)0);
-
-  
+  glDrawElements(_renMode, indices.size(), GL_UNSIGNED_INT, (void*)0);
 }
 
 //---------------------------------------------------------------------
@@ -171,7 +205,7 @@ void HeightField::render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::ma
   glBindVertexArray(VAO);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-  glDrawElements(GL_TRIANGLE_STRIP, indices.size(), GL_UNSIGNED_INT, (void*)0);
+  glDrawElements(_renMode, indices.size(), GL_UNSIGNED_INT, (void*)0);
   
 }
 
