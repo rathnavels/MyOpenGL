@@ -94,7 +94,7 @@ void init(void)
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
   hField.create("Resources/HeightFields/heightfield.raw",1024,1024);
-  hField.loadTexture("Resources/Textures/texture.jpg");
+  hField.loadTexture("Resources/Textures/dirt.jpg");
 }
 
 //---------------------------------------------------------------------
