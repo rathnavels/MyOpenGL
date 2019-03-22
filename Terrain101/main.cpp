@@ -5,17 +5,20 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
-#include <glm\gtc\quaternion.hpp>
-#include <glm\gtx\quaternion.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 
 #include "HeightField.h"
 #include "Arcball.h"
 #include "Shader.h"
 
+#define  STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb/stb_image_write.h"
+
 // settings
-unsigned int SCR_WIDTH = 1800;
-unsigned int SCR_HEIGHT = 1800;
+unsigned int SCR_WIDTH = 1024;
+unsigned int SCR_HEIGHT = 1024;
 
 glm::mat4 viewMat, projMat, modelmat;
 
@@ -152,6 +155,8 @@ static void MouseScroll_Callback(GLFWwindow *pW, double x, double y)
 //---------------------------------------------------------------------
 static void Keyboard_Callback(GLFWwindow *pW, int key, int scancode, int action, int mods)
 {
+  if(action==GLFW_RELEASE)
+  {
     if(key == GLFW_KEY_UP)
     {
       tessLevel++;
@@ -166,14 +171,16 @@ static void Keyboard_Callback(GLFWwindow *pW, int key, int scancode, int action,
       if(tessLevel == 0)
         tessLevel = 8;
     }
-}
+    else if(key == GLFW_KEY_S)
+    {
+    BYTE *pixels = new BYTE[3*SCR_WIDTH*SCR_HEIGHT];
+      
+      glReadPixels(0,0,SCR_WIDTH, SCR_HEIGHT, GL_RGB, GL_UNSIGNED_BYTE, pixels);
 
-//---------------------------------------------------------------------
-// keyPress
-//---------------------------------------------------------------------
-void  keyPress(GLFWwindow *pWindow)
-{
-
+      stbi_flip_vertically_on_write(true);
+      stbi_write_png("ScreenShot.png", SCR_WIDTH, SCR_HEIGHT, 3, pixels, 0);
+    }
+  }
 }
 
 //---------------------------------------------------------------------
@@ -181,7 +188,8 @@ void  keyPress(GLFWwindow *pWindow)
 //---------------------------------------------------------------------
 void Drop_Callback(GLFWwindow *pW, int count, const char** paths)
 {
-
+  
+  
 }
 
 //---------------------------------------------------------------------

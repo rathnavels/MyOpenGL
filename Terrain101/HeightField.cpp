@@ -19,7 +19,7 @@ std::vector<GLuint> indices;
   #undef RENMODE_TRIANGLE_STRIP
 #endif
 
-int polling = 32;
+int polling = 16;
 
 //---------------------------------------------------------------------
 // bound
