@@ -77,11 +77,12 @@ class Vertex
 public:
   glm::vec3 vtx;
   glm::vec3 clr;
+  glm::vec2 tC;
 
-  Vertex(glm::vec3 v, glm::vec3 c)
+  Vertex(glm::vec3 v, glm::vec2 tc)
   {
     vtx = v;
-    clr = c;
+    tC = tc;
   }
 };
 

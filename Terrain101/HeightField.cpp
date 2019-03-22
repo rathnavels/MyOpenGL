@@ -2,6 +2,8 @@
 
 #include "glad/glad.h"
 #include "GL/GL.h"
+
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
 
@@ -77,7 +79,7 @@ bool HeightField::create(char *hFileName, int hX, int hZ)
   {
     for (int hMapZ = 0; hMapZ < hZ; hMapZ++) 
     {
-      vertices.push_back(Vertex(glm::vec3(hMapX, hHeightField[hMapX][hMapZ], hMapZ), glm::vec3((float)hHeightField[hMapX][hMapZ]/250, 0.2, 0.6)));
+      vertices.push_back(Vertex(glm::vec3(hMapX, hHeightField[hMapX][hMapZ], hMapZ), glm::vec2((float)hMapX/hX, (float)hMapZ/hZ)));
       bound(vertices.back().vtx);
     }
   }
@@ -122,7 +124,7 @@ bool HeightField::create(char *hFileName, int hX, int hZ)
 }
 
 //---------------------------------------------------------------------
-// loadTexture
+// cacheToGPU
 //---------------------------------------------------------------------
 void HeightField::cacheToGPU()
 {
@@ -151,7 +153,7 @@ void HeightField::cacheToGPU()
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
 
   glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) sizeof(glm::vec3));
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) sizeof(glm::vec3));
   
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -165,11 +167,23 @@ void HeightField::cacheToGPU()
 //---------------------------------------------------------------------
 void HeightField::loadTexture(char *tFileName)
 {
-  std::string fPath;
-  char filePath[MAX_PATH];
-  
-  _getcwd(filePath, FILENAME_MAX);
-  fPath = std::string(filePath) + "/" + std::string(tFileName);
+  int w, h, comp;
+  unsigned char * image = stbi_load(tFileName, &w, &h, &comp, STBI_rgb);
+
+  glGenTextures(1, &tID);
+  glBindTexture(GL_TEXTURE_2D, tID);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  if(comp == 3)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+  else if(comp == 4)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+
+  glBindTexture(GL_TEXTURE_2D,0);
+    
+  stbi_image_free(image);
 }
 
 
@@ -203,10 +217,9 @@ void HeightField::render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::ma
 
   prog->setUniform("Outer", outer);
   prog->setUniform("Inner", inner);
-
-  glEnable(GL_COLOR);
+  
+  glBindTexture(GL_TEXTURE_2D, tID);
   glBindVertexArray(VAO);
-
   glPatchParameteri(GL_PATCH_VERTICES,4);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
