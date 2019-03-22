@@ -2,6 +2,10 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <ctime>
+#include <string>
+#include <sstream>
+
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
@@ -66,7 +70,7 @@ static void Resize_Callback(GLFWwindow *pW, int w, int h)
   SCR_WIDTH = w;
   SCR_HEIGHT = h;
 
-  setupCamera();
+  projMat = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.01f, 50.0f);
 }
 
 //---------------------------------------------------------------------
@@ -174,11 +178,12 @@ static void Keyboard_Callback(GLFWwindow *pW, int key, int scancode, int action,
     else if(key == GLFW_KEY_S)
     {
     BYTE *pixels = new BYTE[3*SCR_WIDTH*SCR_HEIGHT];
+    std::string filename = "ScreenShots/Screenshot_" + std::to_string(std::time(nullptr)) + ".png";
       
       glReadPixels(0,0,SCR_WIDTH, SCR_HEIGHT, GL_RGB, GL_UNSIGNED_BYTE, pixels);
 
       stbi_flip_vertically_on_write(true);
-      stbi_write_png("ScreenShot.png", SCR_WIDTH, SCR_HEIGHT, 3, pixels, 0);
+      stbi_write_png(filename.c_str(), SCR_WIDTH, SCR_HEIGHT, 3, pixels, 0);
     }
   }
 }
