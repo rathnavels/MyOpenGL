@@ -92,6 +92,7 @@ void init(void)
   glCullFace(GL_BACK);
   glFrontFace(GL_CCW);
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  glLineWidth(2.0);
 
   hField.create("Resources/HeightFields/heightfield.raw",1024,1024);
   hField.loadTexture("Resources/Textures/dirt.jpg");

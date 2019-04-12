@@ -21,7 +21,7 @@ std::vector<GLuint> indices;
   #undef RENMODE_TRIANGLE_STRIP
 #endif
 
-int polling = 16;
+int polling = 24;
 
 //---------------------------------------------------------------------
 // bound
@@ -111,8 +111,8 @@ bool HeightField::create(char *hFileName, int hX, int hZ)
     {
        indices.push_back(hMapX * hZ + hMapZ);
        indices.push_back(hMapX * hZ + hMapZ + polling);
-       indices.push_back(hMapX * hZ + (hX * polling) + hMapZ + polling );
-       indices.push_back(hMapX * hZ + (hX * polling) + hMapZ );
+       indices.push_back((hMapX  + polling) * hZ + hMapZ + polling );
+       indices.push_back((hMapX  + polling) * hZ + hMapZ );
     }
   }
 #endif
