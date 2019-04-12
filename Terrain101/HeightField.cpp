@@ -79,7 +79,7 @@ bool HeightField::create(char *hFileName, int hX, int hZ)
   {
     for (int hMapZ = 0; hMapZ < hZ; hMapZ++) 
     {
-      vertices.push_back(Vertex(glm::vec3(hMapX, hHeightField[hMapX][hMapZ], hMapZ), glm::vec2((float)hMapX/hX, (float)hMapZ/hZ)));
+      vertices.push_back(Vertex(glm::vec3(hMapX, hHeightField[hMapX][hMapZ], hMapZ), glm::vec2((float)hMapX/hX * 10.0, (float)hMapZ/hZ * 10.0)));
       bound(vertices.back().vtx);
     }
   }
@@ -172,6 +172,10 @@ void HeightField::loadTexture(char *tFileName)
 
   glGenTextures(1, &tID);
   glBindTexture(GL_TEXTURE_2D, tID);
+
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

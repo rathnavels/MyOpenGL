@@ -91,11 +91,10 @@ void init(void)
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
   glFrontFace(GL_CCW);
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-  glLineWidth(2.0);
+  //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-  hField.create("Resources/HeightFields/heightfield.raw",1024,1024);
-  hField.loadTexture("Resources/Textures/dirt.jpg");
+  hField.create("Resources/HeightFields/heightField.raw",1024,1024);
+  hField.loadTexture("Resources/Textures/seemless.jpg");
 }
 
 //---------------------------------------------------------------------
@@ -186,6 +185,12 @@ static void Keyboard_Callback(GLFWwindow *pW, int key, int scancode, int action,
       stbi_flip_vertically_on_write(true);
       stbi_write_png(filename.c_str(), SCR_WIDTH, SCR_HEIGHT, 3, pixels, 0);
     }
+    else if (key == GLFW_KEY_ESCAPE)
+      glfwSetWindowShouldClose(pW,GL_TRUE);    
+    else if (key == GLFW_KEY_W)
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    else if (key == GLFW_KEY_F)
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   }
 }
 
@@ -225,9 +230,9 @@ GLFWwindow* glInitWindow(const int &X, const int &Y, char *name)
 {
   GLFWwindow *pW = 0;
 
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
   glfwWindowHint(GLFW_DEPTH_BITS, 32);
   glfwWindowHint(GLFW_STENCIL_BITS, 8);
   glfwWindowHint(GLFW_VISIBLE, GL_TRUE);

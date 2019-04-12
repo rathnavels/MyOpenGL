@@ -11,6 +11,9 @@ out vec3 tColor;
 in vec2 tcs_tC[];
 out vec2 tes_tC;
 
+out float hValue;
+
+
 vec2 interpolate2(in vec2 v0, in vec2 v1, in vec2 v2, in vec2 v3)
 {
 	vec2 a = mix(v0, v1, gl_TessCoord.x);
@@ -36,6 +39,7 @@ void main()
 
 	tes_tC = interpolate2(tcs_tC[0], tcs_tC[1], tcs_tC[2], tcs_tC[3]);
 
+	hValue = gl_Position.y;
 	gl_Position = mMVP * gl_Position;
 
 }
