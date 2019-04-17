@@ -6,6 +6,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
+#include <glm/ext.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/transform.hpp> 
 
 #include <iostream>
 #include <fstream>
@@ -61,6 +64,15 @@ void HeightField::calculateCenterTransform()
   _mDefaultTransform = _mUnitScale * _mCentralizeTranslate;
 }
 
+inline glm::vec2 transformTexCoord(glm::mat3 tT, glm::vec2 tc)
+{
+
+  tc.x = tc.x * tT[0][0] + tT[2][0];
+  tc.y = tc.y * tT[1][1] + tT[2][1];
+
+  return tc;
+
+}
 
 //---------------------------------------------------------------------
 // create
@@ -79,7 +91,7 @@ bool HeightField::create(char *hFileName, int hX, int hZ)
   {
     for (int hMapZ = 0; hMapZ < hZ; hMapZ++) 
     {
-      vertices.push_back(Vertex(glm::vec3(hMapX, hHeightField[hMapX][hMapZ], hMapZ), glm::vec2((float)hMapX/hX * 10.0, (float)hMapZ/hZ * 10.0)));
+      vertices.push_back(Vertex(glm::vec3(hMapX, hHeightField[hMapX][hMapZ], hMapZ), transformTexCoord(glm::mat3(1),glm::vec2((float)hMapX/hX, (float)hMapZ/hZ))));
       bound(vertices.back().vtx);
     }
   }
@@ -174,8 +186,8 @@ void HeightField::loadTexture(char *tFileName)
   glBindTexture(GL_TEXTURE_2D, tID);
 
 
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

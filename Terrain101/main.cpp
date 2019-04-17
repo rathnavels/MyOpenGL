@@ -20,6 +20,8 @@
 #define  STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb/stb_image_write.h"
 
+#include <anttweakbar.h>
+
 // settings
 unsigned int SCR_WIDTH = 1024;
 unsigned int SCR_HEIGHT = 1024;
@@ -40,7 +42,8 @@ int              tessLevel             = 1;
 glm::ivec2       lastMousePosition;
 glm::mat4        objTrans;
 
-
+int              innerTess             = 1;
+int              outerTess             = 1;
 
 
 //---------------------------------------------------------------------
@@ -64,6 +67,10 @@ static void setupCamera()
 //---------------------------------------------------------------------
 static void Resize_Callback(GLFWwindow *pW, int w, int h)
 {
+#ifdef _ANTTWEAK_UI
+  TwWindowSize(w, h);
+#endif
+
   float aR = (float)w / (float)h;
 
   glViewport(0, 0, w, h);
@@ -91,10 +98,9 @@ void init(void)
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
   glFrontFace(GL_CCW);
-  //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
   hField.create("Resources/HeightFields/heightField.raw",1024,1024);
-  hField.loadTexture("Resources/Textures/seemless.jpg");
+  hField.loadTexture("Resources/Textures/ps_texture_1k.png");
 }
 
 //---------------------------------------------------------------------
@@ -102,6 +108,10 @@ void init(void)
 //---------------------------------------------------------------------
 static void MouseButton_Callback(GLFWwindow *pW, int button, int action, int mods)
 {
+#ifdef _ANTTWEAK_UI
+  TwEventMouseButtonGLFW3(pW, button, action, mods);
+#endif
+
   glm::dvec2 vP;
 
   glfwGetCursorPos(pW, &vP.x, &vP.y);
@@ -130,6 +140,10 @@ static void MouseButton_Callback(GLFWwindow *pW, int button, int action, int mod
 //---------------------------------------------------------------------
 static void MouseMotion_Callback(GLFWwindow *pW, double x, double y)
 {
+#ifdef _ANTTWEAK_UI
+  TwEventMousePosGLFW3(pW, x, y);
+#endif
+
   glm::dvec2 vP;
   glm::quat rot = glm::quat();
 
@@ -150,6 +164,10 @@ static void MouseMotion_Callback(GLFWwindow *pW, double x, double y)
 //---------------------------------------------------------------------
 static void MouseScroll_Callback(GLFWwindow *pW, double x, double y)
 {
+#ifdef _ANTTWEAK_UI
+  TwEventMouseWheelGLFW3(pW, x, y);
+#endif
+
   camMovement = glm::vec3(0, 0, 0.02 * y);
   setupCamera();
 }
@@ -159,6 +177,10 @@ static void MouseScroll_Callback(GLFWwindow *pW, double x, double y)
 //---------------------------------------------------------------------
 static void Keyboard_Callback(GLFWwindow *pW, int key, int scancode, int action, int mods)
 {
+#ifdef _ANTTWEAK_UI
+  TwEventKeyGLFW3(pW, key, scancode, action, mods);
+#endif
+
   if(action==GLFW_RELEASE)
   {
     if(key == GLFW_KEY_UP)
@@ -216,6 +238,7 @@ void display(GLFWwindow *pWindow)
     glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
     hField.render(prog, viewMat, projMat, rotMatrix, tessLevel, tessLevel);
 
+    TwDraw();
     glFlush();
 
     glfwSwapBuffers(pWindow);
@@ -230,7 +253,7 @@ GLFWwindow* glInitWindow(const int &X, const int &Y, char *name)
 {
   GLFWwindow *pW = 0;
 
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
   glfwWindowHint(GLFW_DEPTH_BITS, 32);
@@ -269,6 +292,45 @@ int main()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
       }
+
+      TwInit(TW_OPENGL, NULL);
+      TwWindowSize(SCR_WIDTH, SCR_HEIGHT);
+
+      TwBar *myBar;
+      myBar = TwNewBar("Controls");
+
+      TwEnumVal InnerEV[] = 
+      {
+        {1, "1"},
+        {2, "2"},
+        {3, "3"},
+        {4, "4"},
+        {5, "5"},
+        {6, "6"},
+        {7, "7"},
+        {8, "8"}
+      };
+
+      TwType innerVal = TwDefineEnum("Mode", InnerEV, 8);
+
+      TwAddVarRW(myBar, "Inner Tess", innerVal, &innerTess, "help = 'Change Tess' group = 'Tessellation'");
+
+      TwEnumVal OuterEV[] = 
+      {
+        {1, "1"},
+        {2, "2"},
+        {3, "3"},
+        {4, "4"},
+        {5, "5"},
+        {6, "6"},
+        {7, "7"},
+        {8, "8"}
+      };
+
+      TwType outerVal = TwDefineEnum("Mode", OuterEV, 8);
+
+      TwAddVarRW(myBar, "Outer Tess", outerVal, &outerTess, "help = 'Change Tess' group = 'Tessellation'");
+
 
       glfwSetKeyCallback(pWindow, Keyboard_Callback);
       glfwSetMouseButtonCallback(pWindow, MouseButton_Callback);

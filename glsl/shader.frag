@@ -20,10 +20,10 @@ void main()
 //	else
 //		finalColor = finalColor * (hValue/255.0f)* 1;
 
-	float factor = 7;
-
-	if(hValue >= 128)
-		finalColor = finalColor* (hValue/255.0f) * (factor - 767.0f/hValue) * 4;
-	else
-		finalColor = finalColor * (hValue/255.0f) * 4;
+//	float factor = 7;
+//
+//	if(hValue >= 128)
+//		finalColor = finalColor* (hValue/255.0f) * (factor - 767.0f/hValue) * 4;
+//	else
+//		finalColor = finalColor * (hValue/255.0f) * 4;
 }
