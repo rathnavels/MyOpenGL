@@ -18,6 +18,8 @@ std::vector<GLuint> indices;
 
 //#define RENDERMODE_SWITCH
 
+#define COMPLETE_GPU_LOD
+
 #ifdef RENDERMODE_SWITCH
   #define RENMODE_TRIANGLE_STRIP
 #else
@@ -64,6 +66,9 @@ void HeightField::calculateCenterTransform()
   _mDefaultTransform = _mUnitScale * _mCentralizeTranslate;
 }
 
+//---------------------------------------------------------------------
+// transformTexCoord
+//---------------------------------------------------------------------
 inline glm::vec2 transformTexCoord(glm::mat3 tT, glm::vec2 tc)
 {
 
@@ -91,30 +96,11 @@ bool HeightField::create(char *hFileName, int hX, int hZ)
   {
     for (int hMapZ = 0; hMapZ < hZ; hMapZ++) 
     {
-      vertices.push_back(Vertex(glm::vec3(hMapX, hHeightField[hMapX][hMapZ], hMapZ), transformTexCoord(glm::mat3(1),glm::vec2((float)hMapX/hX, (float)hMapZ/hZ))));
+      vertices.push_back(Vertex(glm::vec3(hMapX, hHeightField[hMapX][hMapZ], hMapZ), glm::vec2((float)hMapX/hX, (float)hMapZ/hZ)));
       bound(vertices.back().vtx);
     }
   }
 
-#ifdef RENMODE_TRIANGLE_STRIP
-  _renMode = GL_TRIANGLE_STRIP;
-
-  for (int hMapX = 0; hMapX < hX - polling; hMapX+= polling)
-  {
-    for (int hMapZ = 0; hMapZ < hZ; hMapZ+= polling)
-    {
-      indices.push_back(hMapZ + (hMapX + polling)*hZ);
-
-      if (hMapZ == 0 && hMapX != 0)
-        indices.push_back(indices.back());
-
-      indices.push_back(hMapX * hZ + hMapZ);
-
-      if (hMapZ >= hZ - polling)
-          indices.push_back(indices.back());
-    }
-  }
-#else
   _renMode = GL_PATCHES;
     
   for (int hMapX = 0; hMapX < hX-polling; hMapX+= polling)
@@ -127,7 +113,6 @@ bool HeightField::create(char *hFileName, int hX, int hZ)
        indices.push_back((hMapX  + polling) * hZ + hMapZ );
     }
   }
-#endif
   
   calculateCenterTransform();
   cacheToGPU();
@@ -150,16 +135,6 @@ void HeightField::cacheToGPU()
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * indices.size(), &indices[0], GL_STATIC_DRAW);
-
-#ifdef FIXED
-
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glVertexPointer(3, GL_FLOAT, sizeof(Vertex), 0);
-
-  glEnableClientState(GL_COLOR_ARRAY);
-  glColorPointer(3, GL_FLOAT, sizeof(Vertex), (void*) sizeof(glm::vec3));
-
-#endif
 
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
@@ -206,24 +181,6 @@ void HeightField::loadTexture(char *tFileName)
 //---------------------------------------------------------------------
 // render
 //---------------------------------------------------------------------
-void HeightField::render(glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot)
-{
-  glMatrixMode(GL_PROJECTION);
-  glLoadMatrixf(glm::value_ptr(proj));
-
-  glMatrixMode(GL_MODELVIEW);
-  glLoadMatrixf(glm::value_ptr( view * rot * _mDefaultTransform));
-
-  glEnable(GL_COLOR);
-  glBindVertexArray(VAO);
-
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-  glDrawElements(_renMode, indices.size(), GL_UNSIGNED_INT, (void*)0);
-}
-
-//---------------------------------------------------------------------
-// render
-//---------------------------------------------------------------------
 void HeightField::render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot, int outer, int inner)
 {
   glm::mat4 mMVP = proj * view * rot * _mDefaultTransform;
@@ -233,6 +190,29 @@ void HeightField::render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::ma
 
   prog->setUniform("Outer", outer);
   prog->setUniform("Inner", inner);
+  
+  glBindTexture(GL_TEXTURE_2D, tID);
+  glBindVertexArray(VAO);
+  glPatchParameteri(GL_PATCH_VERTICES,4);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+  glDrawElements(_renMode, indices.size(), GL_UNSIGNED_INT, (void*)0);
+  
+}
+
+//---------------------------------------------------------------------
+// render
+//---------------------------------------------------------------------
+void HeightField::render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot)
+{
+  glm::mat4 mMVP = proj * view * rot * _mDefaultTransform;
+
+  prog->use();
+  prog->setUniform("mMVP", mMVP);
+  prog->setUniform("normalMatrix",glm::inverse(rot*_mDefaultTransform));
+
+  prog->setUniform("Outer", 3);
+  prog->setUniform("Inner", 3);
   
   glBindTexture(GL_TEXTURE_2D, tID);
   glBindVertexArray(VAO);

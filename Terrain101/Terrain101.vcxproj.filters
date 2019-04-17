@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Resource Files\BasicLODShaders">
+      <UniqueIdentifier>{5928a1c1-ae0b-497f-a36d-4ad6f0822003}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\CompGPUShaders">
+      <UniqueIdentifier>{edd4ecc5-5371-4086-ad65-03f18ad71447}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -31,17 +37,29 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\glsl\shader.frag">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="..\glsl\shader.vert">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\glsl\shader.tessC">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\BasicLODShaders</Filter>
     </None>
     <None Include="..\glsl\shader.tessE">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\BasicLODShaders</Filter>
+    </None>
+    <None Include="..\glsl\shader.frag">
+      <Filter>Resource Files\BasicLODShaders</Filter>
+    </None>
+    <None Include="..\glsl\shader.tessC">
+      <Filter>Resource Files\BasicLODShaders</Filter>
+    </None>
+    <None Include="..\glsl\compGPU.frag">
+      <Filter>Resource Files\CompGPUShaders</Filter>
+    </None>
+    <None Include="..\glsl\compGPU.tessC">
+      <Filter>Resource Files\CompGPUShaders</Filter>
+    </None>
+    <None Include="..\glsl\compGPU.tessE">
+      <Filter>Resource Files\CompGPUShaders</Filter>
+    </None>
+    <None Include="..\glsl\compGPU.vert">
+      <Filter>Resource Files\CompGPUShaders</Filter>
     </None>
   </ItemGroup>
 </Project>

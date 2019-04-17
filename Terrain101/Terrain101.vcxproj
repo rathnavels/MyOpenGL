@@ -131,6 +131,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\glsl\compGPU.frag" />
+    <None Include="..\glsl\compGPU.tessC" />
+    <None Include="..\glsl\compGPU.tessE" />
+    <None Include="..\glsl\compGPU.vert" />
     <None Include="..\glsl\shader.frag" />
     <None Include="..\glsl\shader.tessC" />
     <None Include="..\glsl\shader.tessE" />

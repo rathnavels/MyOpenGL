@@ -1,0 +1,27 @@
+#version 410
+
+layout(quads, fractional_even_spacing, cw) in;
+
+uniform sampler2D heightMap;
+uniform float heightStep;
+uniform float gridSpacing;
+uniform int scaleFactor;
+uniform mat4 mMVP;
+
+in vec2 posTC[];
+out vec2 uvTE;
+
+void main()
+{
+
+	ivec2 tSize = textureSize(heightMap, 0) * scaleFactor;
+	vec2 div = tSize * 1.0/64.0;
+	uvTE = posTC[0].xy + gl_TessCoord.st/div;
+	vec4 res;
+	res.xz = uvTE.st * tSize * gridSpacing;
+	res.y = texture(heightMap, uvTE).r * heightStep;
+	res.w = 1.0;
+
+	gl_Position = mMVP * res;
+
+}

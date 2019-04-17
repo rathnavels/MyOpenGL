@@ -30,7 +30,8 @@ glm::mat4 viewMat, projMat, modelmat;
 
 HeightField      hField;
 Arcball          arcball;
-Shader          *prog = new Shader();
+Shader          *basicLOD = new Shader();
+Shader          *compGPULOD = new Shader();
 
 float            z                     = -2;
 glm::quat        qCRot                 = glm::quat(glm::mat4(1));
@@ -88,13 +89,21 @@ TwWindowSize(w, h);
 //---------------------------------------------------------------------
 void init(void)
 {
-  prog->compileShaderFromFile("glsl/shader.vert",   GLSLShader::GLSLShaderType::VERTEX);
-  prog->compileShaderFromFile("glsl/shader.frag",   GLSLShader::GLSLShaderType::FRAGMENT);
-  prog->compileShaderFromFile("glsl/shader.tessC",  GLSLShader::GLSLShaderType::TESS_CONTROL);
-  prog->compileShaderFromFile("glsl/shader.tessE",  GLSLShader::GLSLShaderType::TESS_EVAL);
+  basicLOD->compileShaderFromFile("glsl/shader.vert",   GLSLShader::GLSLShaderType::VERTEX);
+  basicLOD->compileShaderFromFile("glsl/shader.frag",   GLSLShader::GLSLShaderType::FRAGMENT);
+  basicLOD->compileShaderFromFile("glsl/shader.tessC",  GLSLShader::GLSLShaderType::TESS_CONTROL);
+  basicLOD->compileShaderFromFile("glsl/shader.tessE",  GLSLShader::GLSLShaderType::TESS_EVAL);
       
-  prog->link();
-  prog->use();
+  basicLOD->link();
+
+  //compGPULOD->compileShaderFromFile("glsl/compGPU.vert",   GLSLShader::GLSLShaderType::VERTEX);
+  //compGPULOD->compileShaderFromFile("glsl/compGPU.frag",   GLSLShader::GLSLShaderType::FRAGMENT);
+  //compGPULOD->compileShaderFromFile("glsl/compGPU.tessC",  GLSLShader::GLSLShaderType::TESS_CONTROL);
+  //compGPULOD->compileShaderFromFile("glsl/compGPU.tessE",  GLSLShader::GLSLShaderType::TESS_EVAL);
+
+  //compGPULOD->link();
+
+  basicLOD->use();
   
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_TEXTURE_2D);
@@ -262,7 +271,7 @@ void display(GLFWwindow *pWindow)
 
     switchUpdates();
 
-    hField.render(prog, viewMat, projMat, rotMatrix, outerTess, innerTess);
+    hField.render(basicLOD, viewMat, projMat, rotMatrix, outerTess, innerTess);
 
     TwDraw();
     glFlush();
@@ -281,7 +290,7 @@ GLFWwindow* glInitWindow(const int &X, const int &Y, char *name)
 
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
   glfwWindowHint(GLFW_DEPTH_BITS, 32);
   glfwWindowHint(GLFW_STENCIL_BITS, 8);
   glfwWindowHint(GLFW_VISIBLE, GL_TRUE);
