@@ -42,8 +42,12 @@ int              tessLevel             = 1;
 glm::ivec2       lastMousePosition;
 glm::mat4        objTrans;
 
-int              innerTess             = 1;
-int              outerTess             = 1;
+int              innerTess              = 1;
+int              outerTess              = 1;
+int              innerHolder            = 1;
+bool             innerSwitch            = false;
+int              outerHolder            = 1;
+bool             outerSwitch            = false;
 
 
 //---------------------------------------------------------------------
@@ -67,9 +71,8 @@ static void setupCamera()
 //---------------------------------------------------------------------
 static void Resize_Callback(GLFWwindow *pW, int w, int h)
 {
-#ifdef _ANTTWEAK_UI
-  TwWindowSize(w, h);
-#endif
+TwWindowSize(w, h);
+
 
   float aR = (float)w / (float)h;
 
@@ -108,9 +111,7 @@ void init(void)
 //---------------------------------------------------------------------
 static void MouseButton_Callback(GLFWwindow *pW, int button, int action, int mods)
 {
-#ifdef _ANTTWEAK_UI
-  TwEventMouseButtonGLFW3(pW, button, action, mods);
-#endif
+TwEventMouseButtonGLFW3(pW, button, action, mods);
 
   glm::dvec2 vP;
 
@@ -140,9 +141,8 @@ static void MouseButton_Callback(GLFWwindow *pW, int button, int action, int mod
 //---------------------------------------------------------------------
 static void MouseMotion_Callback(GLFWwindow *pW, double x, double y)
 {
-#ifdef _ANTTWEAK_UI
-  TwEventMousePosGLFW3(pW, x, y);
-#endif
+TwEventMousePosGLFW3(pW, x, y);
+
 
   glm::dvec2 vP;
   glm::quat rot = glm::quat();
@@ -164,22 +164,45 @@ static void MouseMotion_Callback(GLFWwindow *pW, double x, double y)
 //---------------------------------------------------------------------
 static void MouseScroll_Callback(GLFWwindow *pW, double x, double y)
 {
-#ifdef _ANTTWEAK_UI
-  TwEventMouseWheelGLFW3(pW, x, y);
-#endif
+TwEventMouseWheelGLFW3(pW, x, y);
 
   camMovement = glm::vec3(0, 0, 0.02 * y);
   setupCamera();
 }
 
 //---------------------------------------------------------------------
+// switchUpdates 
+//---------------------------------------------------------------------
+void switchUpdates()
+{
+  if(innerHolder == innerTess)
+  {
+    innerSwitch = false;
+  }
+  else
+  {
+    innerHolder = innerTess;
+    innerSwitch = true;
+  }
+
+  if(outerHolder == outerTess)
+  {
+    innerSwitch = false;
+  }
+  else
+  {
+    outerHolder = outerTess;
+    outerSwitch = true;
+  }
+}
+
+
+//---------------------------------------------------------------------
 // Keyboard_Callback
 //---------------------------------------------------------------------
 static void Keyboard_Callback(GLFWwindow *pW, int key, int scancode, int action, int mods)
 {
-#ifdef _ANTTWEAK_UI
-  TwEventKeyGLFW3(pW, key, scancode, action, mods);
-#endif
+TwEventKeyGLFW3(pW, key, scancode, action, mods);
 
   if(action==GLFW_RELEASE)
   {
@@ -236,7 +259,10 @@ void display(GLFWwindow *pWindow)
     glClearColor(0.0f,0.0f,0.0f,1.0f);
     glColor3f(0,1,0);
     glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-    hField.render(prog, viewMat, projMat, rotMatrix, tessLevel, tessLevel);
+
+    switchUpdates();
+
+    hField.render(prog, viewMat, projMat, rotMatrix, outerTess, innerTess);
 
     TwDraw();
     glFlush();
