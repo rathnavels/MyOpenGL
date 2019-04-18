@@ -87,7 +87,7 @@ TwWindowSize(w, h);
 //---------------------------------------------------------------------
 // init
 //---------------------------------------------------------------------
-void init(void)
+bool initBasic(void)
 {
   basicLOD->compileShaderFromFile("glsl/shader.vert",   GLSLShader::GLSLShaderType::VERTEX);
   basicLOD->compileShaderFromFile("glsl/shader.frag",   GLSLShader::GLSLShaderType::FRAGMENT);
@@ -95,14 +95,6 @@ void init(void)
   basicLOD->compileShaderFromFile("glsl/shader.tessE",  GLSLShader::GLSLShaderType::TESS_EVAL);
       
   basicLOD->link();
-
-  compGPULOD->compileShaderFromFile("glsl/compGPU.vert",   GLSLShader::GLSLShaderType::VERTEX);
-  compGPULOD->compileShaderFromFile("glsl/compGPU.frag",   GLSLShader::GLSLShaderType::FRAGMENT);
-  compGPULOD->compileShaderFromFile("glsl/compGPU.tessC",  GLSLShader::GLSLShaderType::TESS_CONTROL);
-  compGPULOD->compileShaderFromFile("glsl/compGPU.tessE",  GLSLShader::GLSLShaderType::TESS_EVAL);
-
-  compGPULOD->link();
-
   basicLOD->use();
   
   glEnable(GL_DEPTH_TEST);
@@ -111,8 +103,31 @@ void init(void)
   glCullFace(GL_BACK);
   glFrontFace(GL_CCW);
 
-  hField.create("Resources/HeightFields/heightField.raw",1024,1024);
+  if(!hField.createBasic("Resources/HeightFields/heightField.raw",1024,1024))
+    return false;
   hField.loadTexture("Resources/Textures/ps_texture_1k.png");
+}
+
+//---------------------------------------------------------------------
+// initCompGPU
+//---------------------------------------------------------------------
+bool initCompGPU()
+{
+  compGPULOD->compileShaderFromFile("glsl/compGPU.vert",   GLSLShader::GLSLShaderType::VERTEX);
+  compGPULOD->compileShaderFromFile("glsl/compGPU.frag",   GLSLShader::GLSLShaderType::FRAGMENT);
+  compGPULOD->compileShaderFromFile("glsl/compGPU.tessC",  GLSLShader::GLSLShaderType::TESS_CONTROL);
+  compGPULOD->compileShaderFromFile("glsl/compGPU.tessE",  GLSLShader::GLSLShaderType::TESS_EVAL);
+
+  compGPULOD->link();
+  compGPULOD->use();
+
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_TEXTURE_2D);
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);
+  glFrontFace(GL_CCW);
+
+  return true;
 }
 
 //---------------------------------------------------------------------
@@ -374,9 +389,11 @@ int main()
       glfwSetWindowSizeCallback(pWindow, Resize_Callback);
       glfwSetDropCallback(pWindow, Drop_Callback);
 
-      init();
-      setupCamera();
-      display(pWindow);
+      if(initBasic())
+      {
+        setupCamera();
+        display(pWindow);
+      }
       
       glfwDestroyWindow(pWindow);
     }

@@ -25,9 +25,16 @@ private:
   unsigned int IBO;
   unsigned int tID;
 
+  unsigned int heightMaptID;
+  unsigned int heightMapPatchVAO;
+  unsigned int heightMapPatchVBO;
+  unsigned int heightMapPatchIBO;
+
 public:
 
-  bool create(char *hFileName, int hX, int hZ);
+  bool createBasic(char *hFileName, int hX, int hZ);
+
+  bool createCompGPU(char *hFileName, int hX, int hZ);
 
   void loadTexture(char *tFileName);
 
@@ -57,6 +64,8 @@ public:
 
   BYTE hHeightField[1024][1024];
 
+  float               _mScaleFactor;
+
   HeightField(void) : _vMin(FLT_MAX),
                       _vMax(-FLT_MAX),
                       _vCen(0),
@@ -72,16 +81,30 @@ public:
 //---------------------------------------------------------------------
 // VertexClass
 //---------------------------------------------------------------------
-class Vertex
+class Vertex3
 {
 public:
   glm::vec3 vtx;
   glm::vec2 tC;
 
-  Vertex(glm::vec3 v, glm::vec2 tc)
+  Vertex3(glm::vec3 v, glm::vec2 tc)
   {
     vtx = v;
     tC = tc;
+  }
+};
+
+
+//---------------------------------------------------------------------
+// VertexClass
+//---------------------------------------------------------------------
+class Vertex2
+{
+public:
+  glm::vec2 vtx;
+  Vertex2(glm::vec2 v)
+  {
+    vtx = v;
   }
 };
 
