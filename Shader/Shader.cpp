@@ -158,6 +158,11 @@ void Shader::bindFragDataLocation(uint16_t location, const char *name)
 
 }
 
+void Shader::setSamplerUniform(const char* name, int val)
+{
+  glProgramUniform1i(handle, glGetUniformLocation(handle, name), val);
+}
+
 
 Shader::Shader(const char *vS, const char *fS)
 {

@@ -60,6 +60,8 @@ class Shader
 
     void bindFragDataLocation(uint16_t location, const char *name );
 
+    void setSamplerUniform(const char* name, int val);
+
     Shader(const char *vS, const char *fS);
 
     Shader(void){}

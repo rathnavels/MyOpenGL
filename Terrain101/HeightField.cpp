@@ -18,17 +18,9 @@ std::vector<GLuint>     indices3;
 std::vector<Vertex2>    vertices2;
 std::vector<GLuint>     indices2;
 
-//#define RENDERMODE_SWITCH
-
 #define COMPLETE_GPU_LOD
 
 #define PATCHSIZE 64
-
-#ifdef RENDERMODE_SWITCH
-  #define RENMODE_TRIANGLE_STRIP
-#else
-  #undef RENMODE_TRIANGLE_STRIP
-#endif
 
 int polling = 24;
 
@@ -268,17 +260,27 @@ void HeightField::render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::ma
 
   prog->use();
   prog->setUniform("mMVP", mMVP);
-  prog->setUniform("normalMatrix",glm::inverse(rot*_mDefaultTransform));
+  prog->setUniform("normalMatrix",glm::transpose(glm::inverse(view * rot*_mDefaultTransform)));
 
-  prog->setUniform("Outer", 3);
-  prog->setUniform("Inner", 3);
-  
+  prog->setUniform("heightStep",1.0f);
+  prog->setUniform("gridSpacing",1.0f);
+  prog->setUniform("scaleFactor",1);
+
+  prog->setSamplerUniform("texUnit", 0);
+
+  glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, tID);
+
+  prog->setSamplerUniform("heightMap", 0);
+
+  glActiveTexture(GL_TEXTURE1);
+  glBindTexture(GL_TEXTURE_2D, heightMaptID);
 
 #ifndef COMPLETE_GPU_LOD
   glBindVertexArray(VAO);
   glPatchParameteri(GL_PATCH_VERTICES,4);
 #else
+  glBindVertexArray(heightMapPatchVAO);
   glPatchParameteri(GL_PATCH_VERTICES,1);
 #endif
 

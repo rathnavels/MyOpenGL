@@ -64,7 +64,10 @@ public:
 
   BYTE hHeightField[1024][1024];
 
-  float               _mScaleFactor;
+  int                 _scaleFactor;
+  float               _heightStep;
+  float               _gridSpacing;
+  
 
   HeightField(void) : _vMin(FLT_MAX),
                       _vMax(-FLT_MAX),
