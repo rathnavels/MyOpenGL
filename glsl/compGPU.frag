@@ -2,7 +2,8 @@
 
 uniform mat3 normalMatrix;
 uniform sampler2D texUnit, heightMap;
-uniform float heightStep, gridSpacing, scaleFactor;
+uniform float heightStep, gridSpacing;
+uniform int scaleFactor;
 
 in vec2 uvTE;
 out vec4 outputF;
@@ -28,4 +29,5 @@ void main()
 	
 	outputF = color * intensity + color * vec4(0.2,0.2,0.2,1.0);
 
+	outputF = vec4(1,1,1,1);
 }

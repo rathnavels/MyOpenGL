@@ -129,11 +129,14 @@ bool HeightField::createCompGPU(char *hFileName, int hX, int hZ)
   if(fp==NULL)
     return false;
 
-  fread(hHeightField, 1, hX * hZ, fp);
+  fread(hLoad, 1, hX * hZ, fp);
   fclose(fp);
 
   hmX = hX;
   hmZ = hZ;
+
+  //hHF = new unsigned short[hX*hZ];
+  memcpy(hHF,hLoad,sizeof(unsigned short)*hX*hZ);
 
   glGenTextures(1, &heightMaptID);
   glBindTexture(GL_TEXTURE_2D, heightMaptID);
@@ -144,7 +147,7 @@ bool HeightField::createCompGPU(char *hFileName, int hX, int hZ)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, hX, hZ, 0, GL_RED, GL_UNSIGNED_BYTE, hHeightField);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, hX, hZ, 0, GL_RED, GL_UNSIGNED_SHORT, hHF);
 
   glBindTexture(GL_TEXTURE_2D,0);
 
@@ -152,7 +155,7 @@ bool HeightField::createCompGPU(char *hFileName, int hX, int hZ)
   int nopZ = hZ / PATCHSIZE;
   int numPatches = nopX * nopZ;
 
-  _mScaleFactor = 1.0f;
+  _scaleFactor = 1;
 
   for (int x = 0; x < nopX; x++) 
     for (int z = 0; z < nopX; z++) 
@@ -247,7 +250,7 @@ void HeightField::render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::ma
   glPatchParameteri(GL_PATCH_VERTICES,4);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-  glDrawElements(_renMode, indices3.size(), GL_UNSIGNED_INT, (void*)0);
+  glDrawElements(GL_PATCHES, indices3.size(), GL_UNSIGNED_INT, (void*)0);
   
 }
 
@@ -264,7 +267,7 @@ void HeightField::render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::ma
 
   prog->setUniform("heightStep",1.0f);
   prog->setUniform("gridSpacing",1.0f);
-  prog->setUniform("scaleFactor",1);
+  prog->setUniform("scaleFactor",_scaleFactor);
 
   prog->setSamplerUniform("texUnit", 0);
 
@@ -285,7 +288,7 @@ void HeightField::render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::ma
 #endif
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-  glDrawElements(_renMode, indices3.size(), GL_UNSIGNED_INT, (void*)0);
+  glDrawElements(GL_PATCHES, indices3.size(), GL_UNSIGNED_INT, (void*)0);
   
 }
 

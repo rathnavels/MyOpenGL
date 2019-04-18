@@ -38,7 +38,7 @@ public:
 
   void loadTexture(char *tFileName);
 
-  void render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot, int outerTess = 2, int innerTess = 2);
+  void render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot, int outerTess, int innerTess);
 
   void render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot);
 
@@ -63,6 +63,16 @@ public:
   glm::mat4           _mDefaultTransform;
 
   BYTE hHeightField[1024][1024];
+
+  //unsigned char *hLoad;
+  ////unsigned short *hHF;
+
+  //BYTE *hHHF;
+
+  unsigned short hHF[1048576];
+  unsigned char hLoad[1048576];
+
+  
 
   int                 _scaleFactor;
   float               _heightStep;

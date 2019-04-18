@@ -22,6 +22,8 @@
 
 #include <anttweakbar.h>
 
+
+
 // settings
 unsigned int SCR_WIDTH = 1024;
 unsigned int SCR_HEIGHT = 1024;
@@ -103,9 +105,11 @@ bool initBasic(void)
   glCullFace(GL_BACK);
   glFrontFace(GL_CCW);
 
+  hField.loadTexture("Resources/Textures/ps_texture_1k.png");
   if(!hField.createBasic("Resources/HeightFields/heightField.raw",1024,1024))
     return false;
-  hField.loadTexture("Resources/Textures/ps_texture_1k.png");
+
+  return true;
 }
 
 //---------------------------------------------------------------------
@@ -126,6 +130,12 @@ bool initCompGPU()
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
   glFrontFace(GL_CCW);
+
+  hField.loadTexture("Resources/Textures/ps_texture_1k.png");
+
+  if(!hField.createCompGPU("Resources/HeightFields/heightField.raw",1024,1024))
+      return false;
+
 
   return true;
 }
@@ -286,7 +296,7 @@ void display(GLFWwindow *pWindow)
 
     switchUpdates();
 
-    hField.render(basicLOD, viewMat, projMat, rotMatrix, outerTess, innerTess);
+    hField.render(compGPULOD, viewMat, projMat, rotMatrix);
 
     TwDraw();
     glFlush();
@@ -389,7 +399,7 @@ int main()
       glfwSetWindowSizeCallback(pWindow, Resize_Callback);
       glfwSetDropCallback(pWindow, Drop_Callback);
 
-      if(initBasic())
+      if(initCompGPU())
       {
         setupCamera();
         display(pWindow);
