@@ -96,12 +96,12 @@ void init(void)
       
   basicLOD->link();
 
-  //compGPULOD->compileShaderFromFile("glsl/compGPU.vert",   GLSLShader::GLSLShaderType::VERTEX);
-  //compGPULOD->compileShaderFromFile("glsl/compGPU.frag",   GLSLShader::GLSLShaderType::FRAGMENT);
-  //compGPULOD->compileShaderFromFile("glsl/compGPU.tessC",  GLSLShader::GLSLShaderType::TESS_CONTROL);
-  //compGPULOD->compileShaderFromFile("glsl/compGPU.tessE",  GLSLShader::GLSLShaderType::TESS_EVAL);
+  compGPULOD->compileShaderFromFile("glsl/compGPU.vert",   GLSLShader::GLSLShaderType::VERTEX);
+  compGPULOD->compileShaderFromFile("glsl/compGPU.frag",   GLSLShader::GLSLShaderType::FRAGMENT);
+  compGPULOD->compileShaderFromFile("glsl/compGPU.tessC",  GLSLShader::GLSLShaderType::TESS_CONTROL);
+  compGPULOD->compileShaderFromFile("glsl/compGPU.tessE",  GLSLShader::GLSLShaderType::TESS_EVAL);
 
-  //compGPULOD->link();
+  compGPULOD->link();
 
   basicLOD->use();
   

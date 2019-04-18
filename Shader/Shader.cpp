@@ -36,7 +36,25 @@ bool Shader::compileShaderFromFile(const char *filename, GLSLShader::GLSLShaderT
   GLuint shaderHandle = glCreateShader(type);
   const char *c_code = code.c_str();
   glShaderSource(shaderHandle, 1, &c_code, NULL);
-
+  
+  switch(type)
+  {
+    case GLSLShader::GLSLShaderType::VERTEX:
+      std::cout << "Compiling Vertex Shader\n";
+      break;
+    case GLSLShader::GLSLShaderType::TESS_EVAL:
+        std::cout << "Compiling TESS_EVAL Shader\n";
+        break;
+    case GLSLShader::GLSLShaderType::TESS_CONTROL:
+        std::cout << "Compiling TESS_CONTROL Shader\n";
+        break;
+    case GLSLShader::GLSLShaderType::FRAGMENT:
+        std::cout << "Compiling FRAGMENT Shader\n";
+        break;
+    default:
+        std::cout << "Invalid Type\n";
+  }
+    
   glCompileShader(shaderHandle);
 
   // Error Checking

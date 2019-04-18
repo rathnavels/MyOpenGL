@@ -20,7 +20,7 @@ void main()
 
 	vec3 deltaZ = vec3(0.0,height(uvTE.s, uvTE.t + delta) - height(uvTE.s, uvTE.t - delta), 2.0 * gridSpacing);
 
-	normalF = normalize(normalMatrix * cross(deltaZ, deltaX));
+	vec3 normalF = normalize(normalMatrix * cross(deltaZ, deltaX));
 
 	float intensity = max(dot(vec3(0.577,0.577,0.577),normalF),0.0);
 
