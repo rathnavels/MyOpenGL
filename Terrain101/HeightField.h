@@ -44,9 +44,13 @@ public:
 
   void bound(const glm::vec3 &v);
 
+  void bound(const glm::vec2 &v);
+
   void determine3();
 
-  void calculateCenterTransform();
+  void determine2();
+
+  void calculateCenterTransform(glm::vec3 cen);
 
   void cacheToGPU();
 

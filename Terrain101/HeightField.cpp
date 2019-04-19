@@ -25,7 +25,7 @@ std::vector<GLuint>     indices2;
 int polling = 24;
 
 //---------------------------------------------------------------------
-// bound
+// determine3
 //---------------------------------------------------------------------
 void HeightField::determine3(void)
 {
@@ -34,7 +34,17 @@ void HeightField::determine3(void)
 }
 
 //---------------------------------------------------------------------
-// bound
+// determine2
+//---------------------------------------------------------------------
+void HeightField::determine2(void)
+{
+  _vCen2 = (_vMax2 + _vMin2) * 0.5f;
+  _bndRadius = glm::distance(_vMax2, _vMin2) * 0.5f;
+}
+
+
+//---------------------------------------------------------------------
+// bound3
 //---------------------------------------------------------------------
 void  HeightField::bound(const glm::vec3 &v)
 {
@@ -45,13 +55,26 @@ void  HeightField::bound(const glm::vec3 &v)
 }
 
 //---------------------------------------------------------------------
+// bound2
+//---------------------------------------------------------------------
+void  HeightField::bound(const glm::vec2 &v)
+{
+  _vMin2 = glm::min(_vMin2, v);
+  _vMax2 = glm::max(_vMax2, v);
+
+  determine2();
+}
+
+//---------------------------------------------------------------------
 // calculateCenterTransform
 //---------------------------------------------------------------------
-void HeightField::calculateCenterTransform()
+void HeightField::calculateCenterTransform(glm::vec3 cen)
 {
-  float oneOverRadius = 1.0f / _bndRadius;
+  float oneOverRadius = 1.0f / 512.0f;
 
-  _mCentralizeTranslate = glm::translate(glm::mat4(1), -_vCen3);
+  //_mCentralizeTranslate = glm::translate(glm::mat4(1), -cen);
+
+   _mCentralizeTranslate = glm::translate(glm::mat4(1), glm::vec3(-512.0f, 0, -512.0f));
 
   if (oneOverRadius < 1.0f)
     _mUnitScale = glm::scale(glm::mat4(1), glm::vec3(oneOverRadius * 0.7));
@@ -111,7 +134,7 @@ bool HeightField::createBasic(char *hFileName, int hX, int hZ)
     }
   }
   
-  calculateCenterTransform();
+  calculateCenterTransform(_vCen3);
   cacheToGPU();
 
   return true;
@@ -144,7 +167,7 @@ bool HeightField::createCompGPU(char *hFileName, int hX, int hZ)
 
   for(int i=0; i<hX; i++)
     for(int j=0; j<hZ; j++)
-      hHF[(i*hZ)+j] = hLoad[(i*hZ)+j];
+      hHF[(i*hZ)+j] = hLoad[(i*hZ)+j];    
 
   glGenTextures(1, &heightMaptID);
   glBindTexture(GL_TEXTURE_2D, heightMaptID);
@@ -167,10 +190,12 @@ bool HeightField::createCompGPU(char *hFileName, int hX, int hZ)
 
   for (int x = 0; x < nopX; x++) 
     for (int z = 0; z < nopX; z++) 
+    {
        vertices2.push_back(Vertex2(glm::vec2((float)x * PATCHSIZE/hX, (float)z * PATCHSIZE/hZ)));
+       bound(vertices2.back().vtx);
+    }
 
-
- // _mDefaultTransform = glm::translate(glm::mat4(1), glm::vec3(hX * 0.5, 0.0, hZ * 0.5));
+  calculateCenterTransform(glm::vec3(_vCen2.x , 0.0, _vCen2.y));
   
   glGenVertexArrays(1, &heightMapPatchVAO);
   glBindVertexArray(heightMapPatchVAO);
@@ -274,9 +299,9 @@ void HeightField::render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::ma
 
   prog->use();
   prog->setUniform("mMVP", mMVP);
-  prog->setUniform("normalMatrix",glm::transpose(glm::inverse(view * rot*_mDefaultTransform)));
+  prog->setUniform("normalMatrix",glm::transpose(glm::inverse(view * rot * _mDefaultTransform)));
 
-  prog->setUniform("heightStep",2.0f);
+  prog->setUniform("heightStep",50.0f);
   prog->setUniform("gridSpacing",1.0f);
   prog->setUniform("scaleFactor",_scaleFactor);
 

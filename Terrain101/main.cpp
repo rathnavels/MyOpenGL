@@ -65,7 +65,7 @@ static void setupCamera()
   up = glm::vec3(0, 1, 0);
 
   viewMat = glm::lookAt(lookFrom, lookAt, up);
-  projMat = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.01f, 50.0f);
+  projMat = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.01f, 500.0f);
 }
 
 
