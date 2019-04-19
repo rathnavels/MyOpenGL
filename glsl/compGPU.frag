@@ -1,7 +1,8 @@
 #version 410
 
 uniform mat3 normalMatrix;
-uniform sampler2D texUnit, heightMap;
+uniform sampler2D texUnit;
+uniform sampler2D heightMap;
 uniform float heightStep, gridSpacing;
 uniform int scaleFactor;
 

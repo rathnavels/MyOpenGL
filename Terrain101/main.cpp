@@ -105,8 +105,8 @@ bool initBasic(void)
   glCullFace(GL_BACK);
   glFrontFace(GL_CCW);
 
-  hField.loadTexture("Resources/Textures/ps_texture_1k.png");
-  if(!hField.createBasic("Resources/HeightFields/heightField.raw",1024,1024))
+  hField.loadTexture("Resources/Textures/spiral2.png");
+  if(!hField.createBasic("Resources/HeightFields/spiral.data",1024,1024))
     return false;
 
   return true;
@@ -131,11 +131,11 @@ bool initCompGPU()
   glCullFace(GL_BACK);
   glFrontFace(GL_CCW);
 
-  hField.loadTexture("Resources/Textures/ps_texture_1k.png");
 
-  if(!hField.createCompGPU("Resources/HeightFields/heightField.raw",1024,1024))
+  if(!hField.createCompGPU("Resources/HeightFields/ps_height_1k.data",1024,1024))
       return false;
 
+  hField.loadTexture("Resources/Textures/ps_texture_1k.png");
 
   return true;
 }

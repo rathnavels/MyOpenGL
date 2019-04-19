@@ -178,7 +178,7 @@ bool HeightField::createCompGPU(char *hFileName, int hX, int hZ)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, hX, hZ, 0, GL_RED, GL_UNSIGNED_SHORT, &hHF[0]);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, hX, hZ, 0, GL_RED, GL_UNSIGNED_SHORT, hHF);
 
   glBindTexture(GL_TEXTURE_2D,0);
 
@@ -305,15 +305,16 @@ void HeightField::render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::ma
   prog->setUniform("gridSpacing",1.0f);
   prog->setUniform("scaleFactor",_scaleFactor);
 
-  prog->setSamplerUniform("texUnit", 0);
-
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, tID);
-
   prog->setSamplerUniform("heightMap", 0);
 
-  glActiveTexture(GL_TEXTURE1);
+  glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, heightMaptID);
+
+  prog->setSamplerUniform("texUnit", 1);
+
+  glActiveTexture(GL_TEXTURE1);
+  glBindTexture(GL_TEXTURE_2D, tID);
+
 
 #ifndef COMPLETE_GPU_LOD
   glBindVertexArray(VAO);
