@@ -27,7 +27,7 @@ void main()
 
 	vec4 color = texture2D(texUnit, uvTE) * vec4 (0.8,0.8,0.8,1.0);
 	
-	outputF = color * intensity + color * vec4(0.2,0.2,0.2,1.0);
+	outputF = color * intensity + color * vec4(0.8,0.8,0.8,1.0);
 
-	outputF = vec4(1,1,1,1);
+//	outputF = vec4(1,1,1,1);
 }

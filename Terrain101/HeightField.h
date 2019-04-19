@@ -44,17 +44,21 @@ public:
 
   void bound(const glm::vec3 &v);
 
-  void determine();
+  void determine3();
 
   void calculateCenterTransform();
 
   void cacheToGPU();
 
-  glm::vec3           _vMin;                            ///<    Min Vertex
-  glm::vec3           _vMax;                            ///<    Max Vertex
-  glm::vec3           _vCen;                            ///<    VertexLst center vertex
-  glm::vec3           _vFW;                             ///<    View volume full width
-  float               _bndRadius;                       ///<    Bounding Radius
+  glm::vec3           _vMin3;                            ///<    Min Vertex
+  glm::vec3           _vMax3;                            ///<    Max Vertex
+  glm::vec3           _vCen3;                            ///<    VertexLst center vertex
+
+  glm::vec2           _vMin2;                            ///<    Min Vertex
+  glm::vec2           _vMax2;                            ///<    Max Vertex
+  glm::vec2           _vCen2;                            ///<    VertexLst center vertex
+
+  float               _bndRadius;                        ///<    Bounding Radius
 
   GLuint              _renMode;
 
@@ -64,13 +68,8 @@ public:
 
   BYTE hHeightField[1024][1024];
 
-  //unsigned char *hLoad;
-  ////unsigned short *hHF;
-
-  //BYTE *hHHF;
-
   unsigned short hHF[1048576];
-  unsigned char hLoad[1048576];
+  BYTE hLoad[1048576];
 
   
 
@@ -79,10 +78,12 @@ public:
   float               _gridSpacing;
   
 
-  HeightField(void) : _vMin(FLT_MAX),
-                      _vMax(-FLT_MAX),
-                      _vCen(0),
-                      _vFW(0),
+  HeightField(void) : _vMin3(FLT_MAX),
+                      _vMax3(-FLT_MAX),
+                      _vCen3(0),
+                      _vMin2(FLT_MAX),
+                      _vMax2(-FLT_MAX),
+                      _vCen2(0),
                       _bndRadius(0),
                       _mCentralizeTranslate(glm::mat4(1)),
                       _mUnitScale(glm::mat4(1)),
