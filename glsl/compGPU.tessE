@@ -2,7 +2,7 @@
 
 layout(quads, fractional_even_spacing, cw) in;
 
-uniform sampler2D heightMap;
+uniform sampler2D heightMap, texUnit;
 uniform float heightStep;
 uniform float gridSpacing;
 uniform int scaleFactor;
@@ -10,6 +10,11 @@ uniform mat4 mMVP;
 
 in vec2 posTC[];
 out vec2 uvTE;
+
+float rand(vec2 co)
+{
+   return fract(sin(dot(co.xy,vec2(12.9898,78.233))) * 43758.5453);
+}
 
 void main()
 {
@@ -19,7 +24,9 @@ void main()
 	uvTE = posTC[0].xy + gl_TessCoord.st/div;
 	vec4 res;
 	res.xz = uvTE.st * tSize * gridSpacing;
-	res.y = texture(heightMap, uvTE).r * heightStep;
+	//res.y = texture(heightMap, uvTE) * heightStep;
+	res.y = (texture(heightMap, uvTE).r + texture(heightMap, uvTE).g + texture(heightMap, uvTE).b)/3 * heightStep;
+	//res.y = tSize.x - 1090;
 	res.w = 1.0;
 
 	gl_Position = mMVP * res;

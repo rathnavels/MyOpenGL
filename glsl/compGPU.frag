@@ -16,19 +16,19 @@ float height(float u, float v)
 
 void main()
 {
-	float delta = 1.0 / textureSize(heightMap,0).x * scaleFactor;
-
-	vec3 deltaX = vec3(2.0 * gridSpacing, height(uvTE.s + delta, uvTE.t) -  height(uvTE.s - delta, uvTE.t), 0.0);
-
-	vec3 deltaZ = vec3(0.0,height(uvTE.s, uvTE.t + delta) - height(uvTE.s, uvTE.t - delta), 2.0 * gridSpacing);
-
-	vec3 normalF = normalize(normalMatrix * cross(deltaZ, deltaX));
-
-	float intensity = max(dot(vec3(0.577,0.577,0.577),normalF),0.0);
+//	float delta = 1.0 / textureSize(heightMap,0).x * scaleFactor;
+//
+//	vec3 deltaX = vec3(2.0 * gridSpacing, height(uvTE.s + delta, uvTE.t) -  height(uvTE.s - delta, uvTE.t), 0.0);
+//
+//	vec3 deltaZ = vec3(0.0,height(uvTE.s, uvTE.t + delta) - height(uvTE.s, uvTE.t - delta), 2.0 * gridSpacing);
+//
+//	vec3 normalF = normalize(normalMatrix * cross(deltaZ, deltaX));
+//
+//	float intensity = max(dot(vec3(0.577,0.577,0.577),normalF),0.0);
 
 	vec4 color = texture2D(texUnit, uvTE) * vec4 (0.8,0.8,0.8,1.0);
-	
-	outputF = color * intensity + color * vec4(0.8,0.8,0.8,1.0);
 
-//	outputF = vec4(1,1,1,1);
+	//outputF = color * intensity + color * vec4(0.8,0.8,0.8,1.0);
+
+	outputF = color * vec4(1.2f,1.2f,1.2f,1.0f);
 }

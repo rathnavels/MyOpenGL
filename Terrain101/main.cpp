@@ -132,7 +132,7 @@ bool initCompGPU()
   glFrontFace(GL_CCW);
 
 
-  if(!hField.createCompGPU("Resources/HeightFields/ps_height_1k.data",1024,1024))
+  if(!hField.createCompGPU("Resources/HeightFields/ps_height_1k.raw",1024,1024))
       return false;
 
   hField.loadTexture("Resources/Textures/ps_texture_1k.png");

@@ -147,27 +147,33 @@ bool HeightField::createCompGPU(char *hFileName, int hX, int hZ)
 {
   FILE *fp;
 
-  //unsigned short hHF[1048576];
-  //unsigned char hLoad[1048576];
-
   fopen_s(&fp, hFileName, "rb");
 
   if(fp==NULL)
     return false;
 
   fread(hLoad, 1, hX * hZ, fp);
-  fclose(fp);
 
   hmX = hX;
   hmZ = hZ;
 
+  //int comp;
+  //unsigned char * image = stbi_load_from_file(fp, &hmX, &hmZ, &comp, STBI_rgb);
+
+  fclose(fp);
 
   //hHF = (unsigned short*)malloc(sizeof(unsigned short)*hX*hZ);
   //memcpy(hHF,(uint8_t*)hLoad,sizeof(unsigned char)*hX*hZ);
-
+  int maxValue = -1;
   for(int i=0; i<hX; i++)
     for(int j=0; j<hZ; j++)
-      hHF[(i*hZ)+j] = hLoad[(i*hZ)+j];    
+    {
+      int loopNum = (i*hZ)+j;
+      //hHF[loopNum] = hLoad[loopNum];   
+      hHF[loopNum] = glm::linearRand(100,255);   
+      //maxValue = maxValue > hLoad[loopNum] ? maxValue : hLoad[loopNum];   
+      //hHF[i][j] = hLoad[(i*hZ)+j];
+    }
 
   glGenTextures(1, &heightMaptID);
   glBindTexture(GL_TEXTURE_2D, heightMaptID);
@@ -178,7 +184,9 @@ bool HeightField::createCompGPU(char *hFileName, int hX, int hZ)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, hX, hZ, 0, GL_RED, GL_UNSIGNED_SHORT, hHF);
+  //glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, hX, hZ, 0, GL_RED, GL_UNSIGNED_BYTE, image);
+
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, hX, hZ, 0, GL_RED, GL_UNSIGNED_SHORT, hHF);
 
   glBindTexture(GL_TEXTURE_2D,0);
 
@@ -303,7 +311,7 @@ void HeightField::render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::ma
 
   prog->setUniform("heightStep",50.0f);
   prog->setUniform("gridSpacing",1.0f);
-  prog->setUniform("scaleFactor",_scaleFactor);
+  prog->setUniform("scaleFactor",1);
 
   prog->setSamplerUniform("heightMap", 0);
 
