@@ -24,9 +24,7 @@ void main()
 	uvTE = posTC[0].xy + gl_TessCoord.st/div;
 	vec4 res;
 	res.xz = uvTE.st * tSize * gridSpacing;
-	//res.y = texture(heightMap, uvTE) * heightStep;
-	res.y = (texture(heightMap, uvTE).r + texture(heightMap, uvTE).g + texture(heightMap, uvTE).b)/3 * heightStep;
-	//res.y = tSize.x - 1090;
+	res.y = texture(heightMap, uvTE).r * 20;
 	res.w = 1.0;
 
 	gl_Position = mMVP * res;

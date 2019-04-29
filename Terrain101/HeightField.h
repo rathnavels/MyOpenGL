@@ -72,8 +72,11 @@ public:
 
   BYTE hHeightField[1024][1024];
 
-  unsigned short hHF[1048576];
-  BYTE hLoad[1048576];
+  //unsigned short hHF[1048576];
+  //BYTE hLoad[1048576];
+
+  unsigned short hHF[1024][1024];
+  BYTE hLoad[1024][1024];
 
   
 

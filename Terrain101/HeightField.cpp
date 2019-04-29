@@ -157,36 +157,33 @@ bool HeightField::createCompGPU(char *hFileName, int hX, int hZ)
   hmX = hX;
   hmZ = hZ;
 
-  //int comp;
-  //unsigned char * image = stbi_load_from_file(fp, &hmX, &hmZ, &comp, STBI_rgb);
-
   fclose(fp);
 
-  //hHF = (unsigned short*)malloc(sizeof(unsigned short)*hX*hZ);
-  //memcpy(hHF,(uint8_t*)hLoad,sizeof(unsigned char)*hX*hZ);
   int maxValue = -1;
   for(int i=0; i<hX; i++)
     for(int j=0; j<hZ; j++)
     {
-      int loopNum = (i*hZ)+j;
+      //int loopNum = (i*hZ)+j;
       //hHF[loopNum] = hLoad[loopNum];   
-      hHF[loopNum] = glm::linearRand(100,255);   
-      //maxValue = maxValue > hLoad[loopNum] ? maxValue : hLoad[loopNum];   
-      //hHF[i][j] = hLoad[(i*hZ)+j];
+      hHF[hX][hZ] = hLoad[hX][hZ];   
     }
 
   glGenTextures(1, &heightMaptID);
   glBindTexture(GL_TEXTURE_2D, heightMaptID);
 
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-  //glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, hX, hZ, 0, GL_RED, GL_UNSIGNED_BYTE, image);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, hX, hZ, 0, GL_RED, GL_UNSIGNED_BYTE, hLoad);
 
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, hX, hZ, 0, GL_RED, GL_UNSIGNED_SHORT, hHF);
+// check OpenGL error
+    GLenum err;
+    while ((err = glGetError()) != GL_NO_ERROR) {
+        std::cout << "OpenGL error: " << err << std::endl;
+    }
 
   glBindTexture(GL_TEXTURE_2D,0);
 
@@ -257,6 +254,9 @@ void HeightField::loadTexture(char *tFileName)
 {
   int w, h, comp;
   unsigned char * image = stbi_load(tFileName, &w, &h, &comp, STBI_rgb);
+
+  if(stbi_failure_reason())
+    std::cout << stbi_failure_reason();
 
   glGenTextures(1, &tID);
   glBindTexture(GL_TEXTURE_2D, tID);
