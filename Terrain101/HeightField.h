@@ -78,13 +78,10 @@ public:
   unsigned short hHF[1024][1024];
   BYTE hLoad[1024][1024];
 
-  
-
   int                 _scaleFactor;
   float               _heightStep;
   float               _gridSpacing;
   
-
   HeightField(void) : _vMin3(FLT_MAX),
                       _vMax3(-FLT_MAX),
                       _vCen3(0),
