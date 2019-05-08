@@ -2,14 +2,15 @@
 
 layout(quads, fractional_even_spacing, cw) in;
 
-uniform sampler2D heightMap, texUnit;
-uniform float heightStep;
-uniform float gridSpacing;
-uniform int scaleFactor;
-uniform mat4 mMVP;
+uniform sampler2D		heightMap;
+uniform sampler2D       texUnit;
+uniform float			heightStep;
+uniform float			gridSpacing;
+uniform int				scaleFactor;
+uniform mat4			mMVP;
 
-in vec2 posTC[];
-out vec2 uvTE;
+in vec2					posTC[];
+out vec2				uvTE;
 
 float rand(vec2 co)
 {
@@ -18,15 +19,18 @@ float rand(vec2 co)
 
 void main()
 {
+	{
+	vec4		res;
+	ivec2		tSize;
+	vec2		div;				
 
-	ivec2 tSize = textureSize(heightMap, 0) * scaleFactor;
-	vec2 div = tSize * 1.0/64.0;
-	uvTE = posTC[0].xy + gl_TessCoord.st/div;
-	vec4 res;
-	res.xz = uvTE.st * tSize * gridSpacing;
-	res.y = texture(heightMap, uvTE).r * 20;
-	res.w = 1.0;
-
-	gl_Position = mMVP * res;
-
+		tSize						= textureSize(heightMap, 0) * scaleFactor;
+		div							= tSize * 1.0/64.0;
+		uvTE						= posTC[0].xy + gl_TessCoord.st/div;
+		res.xz						= uvTE.st * tSize * gridSpacing;
+		res.y						= texture(heightMap, uvTE).r * 20;
+		res.w						= 1.0;
+	
+		gl_Position = mMVP * res;
+	}
 }
