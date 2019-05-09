@@ -91,7 +91,9 @@ public:
                       _bndRadius(0),
                       _mCentralizeTranslate(glm::mat4(1)),
                       _mUnitScale(glm::mat4(1)),
-                      _mDefaultTransform(glm::mat4(1))
+                      _mDefaultTransform(glm::mat4(1)),
+                      _gridSpacing(5),
+                      _heightStep(100)
                     {}
  
 };

@@ -13,22 +13,22 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 
-#include "HeightField.h"
-#include "Arcball.h"
-#include "Shader.h"
-
 #define  STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb/stb_image_write.h"
 
 #include <anttweakbar.h>
 
-
+#include "HeightField.h"
+#include "Arcball.h"
+#include "Shader.h"
 
 // settings
-unsigned int SCR_WIDTH = 1024;
-unsigned int SCR_HEIGHT = 1024;
+unsigned int SCR_WIDTH = 1280;
+unsigned int SCR_HEIGHT = 1280;
 
 glm::mat4 viewMat, projMat, modelmat;
+
+
 
 HeightField      hField;
 Arcball          arcball;
@@ -83,33 +83,7 @@ TwWindowSize(w, h);
   SCR_WIDTH = w;
   SCR_HEIGHT = h;
 
-  projMat = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.01f, 50.0f);
-}
-
-//---------------------------------------------------------------------
-// init
-//---------------------------------------------------------------------
-bool initBasic(void)
-{
-  basicLOD->compileShaderFromFile("glsl/shader.vert",   GLSLShader::GLSLShaderType::VERTEX);
-  basicLOD->compileShaderFromFile("glsl/shader.frag",   GLSLShader::GLSLShaderType::FRAGMENT);
-  basicLOD->compileShaderFromFile("glsl/shader.tessC",  GLSLShader::GLSLShaderType::TESS_CONTROL);
-  basicLOD->compileShaderFromFile("glsl/shader.tessE",  GLSLShader::GLSLShaderType::TESS_EVAL);
-      
-  basicLOD->link();
-  basicLOD->use();
-  
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_TEXTURE_2D);
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
-  glFrontFace(GL_CCW);
-
-  hField.loadTexture("Resources/Textures/spiral2.png");
-  if(!hField.createBasic("Resources/HeightFields/spiral.data",1024,1024))
-    return false;
-
-  return true;
+  projMat = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.01f, 6000.0f);
 }
 
 //---------------------------------------------------------------------

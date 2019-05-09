@@ -1,4 +1,5 @@
-#include "HeightField.h"
+#include <iostream>
+#include <fstream>
 
 #include "glad/glad.h"
 #include "GL/GL.h"
@@ -10,8 +11,10 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/transform.hpp> 
 
-#include <iostream>
-#include <fstream>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+
+#include "HeightField.h"
 
 std::vector<Vertex3>    vertices3;
 std::vector<GLuint>     indices3;
@@ -70,11 +73,13 @@ void  HeightField::bound(const glm::vec2 &v)
 //---------------------------------------------------------------------
 void HeightField::calculateCenterTransform(glm::vec3 cen)
 {
-  float oneOverRadius = 1.0f / 512.0f;
+  float oneOverRadius = 1.0f / (hmX * 0.5 * _gridSpacing);
 
   //_mCentralizeTranslate = glm::translate(glm::mat4(1), -cen);
 
-   _mCentralizeTranslate = glm::translate(glm::mat4(1), glm::vec3(-512.0f, 0, -512.0f));
+  // _mCentralizeTranslate = glm::translate(glm::mat4(1), glm::vec3(-512.0f, 0, -512.0f));
+
+  _mCentralizeTranslate = glm::translate(glm::mat4(1), -glm::vec3(hmX * 0.5 * _gridSpacing , 0 , hmZ * 0.5 * _gridSpacing));
 
   if (oneOverRadius < 1.0f)
     _mUnitScale = glm::scale(glm::mat4(1), glm::vec3(oneOverRadius * 0.7));
@@ -160,13 +165,13 @@ bool HeightField::createCompGPU(char *hFileName, int hX, int hZ)
   fclose(fp);
 
   int maxValue = -1;
-  for(int i=0; i<hX; i++)
-    for(int j=0; j<hZ; j++)
-    {
-      //int loopNum = (i*hZ)+j;
-      //hHF[loopNum] = hLoad[loopNum];   
-      hHF[hX][hZ] = hLoad[hX][hZ];   
-    }
+  //for(int i=0; i<hX; i++)
+  //  for(int j=0; j<hZ; j++)
+  //  {
+  //    //int loopNum = (i*hZ)+j;
+  //    //hHF[loopNum] = hLoad[loopNum];   
+  //    hHF[hX][hZ] = hLoad[hX][hZ];   
+  //  }
 
   glGenTextures(1, &heightMaptID);
   glBindTexture(GL_TEXTURE_2D, heightMaptID);
@@ -253,10 +258,15 @@ void HeightField::cacheToGPU()
 void HeightField::loadTexture(char *tFileName)
 {
   int w, h, comp;
-  unsigned char * image = stbi_load(tFileName, &w, &h, &comp, STBI_rgb);
+  cv::Mat img;
+  img = cv::imread(tFileName);
+  w = img.cols;
+  h = img.rows;
+  comp = img.channels();
+  /*unsigned char * image = stbi_load(tFileName, &w, &h, &comp, STBI_rgb);
 
   if(stbi_failure_reason())
-    std::cout << stbi_failure_reason();
+    std::cout << stbi_failure_reason();*/
 
   glGenTextures(1, &tID);
   glBindTexture(GL_TEXTURE_2D, tID);
@@ -265,13 +275,15 @@ void HeightField::loadTexture(char *tFileName)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
   if(comp == 3)
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_BGR, GL_UNSIGNED_BYTE, img.data);
   else if(comp == 4)
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_BGRA, GL_UNSIGNED_BYTE, img.data);
 
   glBindTexture(GL_TEXTURE_2D,0);
+
+  img.deallocate();
     
-  stbi_image_free(image);
+  //stbi_image_free(image);
 }
 
 
@@ -306,14 +318,17 @@ void HeightField::render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::ma
   glm::mat4 mMVP = proj * view * rot * _mDefaultTransform;
 
   prog->use();
-  prog->setUniform("mMVP", mMVP);
-  prog->setUniform("normalMatrix",glm::transpose(glm::inverse(view * rot * _mDefaultTransform)));
 
-  prog->setUniform("heightStep",50.0f);
-  prog->setUniform("gridSpacing",1.0f);
-  prog->setUniform("scaleFactor",1);
+  prog->setUniform("heightStep",      _heightStep);
+  prog->setUniform("gridSpacing",     _gridSpacing);
+  prog->setUniform("scaleFactor",     1);
 
   prog->setSamplerUniform("heightMap", 0);
+
+  calculateCenterTransform(glm::vec3(_vCen2.x , 0.0, _vCen2.y));
+
+  prog->setUniform("normalMatrix",glm::transpose(glm::inverse(view * rot * _mDefaultTransform)));
+  prog->setUniform("mMVP", mMVP);
 
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, heightMaptID);
@@ -322,7 +337,6 @@ void HeightField::render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::ma
 
   glActiveTexture(GL_TEXTURE1);
   glBindTexture(GL_TEXTURE_2D, tID);
-
 
 #ifndef COMPLETE_GPU_LOD
   glBindVertexArray(VAO);
