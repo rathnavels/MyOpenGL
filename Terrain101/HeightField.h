@@ -32,9 +32,7 @@ private:
 
 public:
 
-  bool createBasic(char *hFileName, int hX, int hZ);
-
-  bool createCompGPU(char *hFileName, int hX, int hZ);
+  bool createCompGPU(char *hFileName);
 
   void loadTexture(char *tFileName);
 
@@ -70,13 +68,10 @@ public:
   glm::mat4           _mUnitScale;
   glm::mat4           _mDefaultTransform;
 
-  BYTE hHeightField[1024][1024];
+  //BYTE hHeightField[1024][1024];
 
-  //unsigned short hHF[1048576];
-  //BYTE hLoad[1048576];
-
-  unsigned short hHF[1024][1024];
-  BYTE hLoad[1024][1024];
+  //unsigned short hHF[1024][1024];
+  short hLoad[1346][1484];
 
   int                 _scaleFactor;
   float               _heightStep;
@@ -92,8 +87,8 @@ public:
                       _mCentralizeTranslate(glm::mat4(1)),
                       _mUnitScale(glm::mat4(1)),
                       _mDefaultTransform(glm::mat4(1)),
-                      _gridSpacing(5),
-                      _heightStep(100)
+                      _gridSpacing(1),
+                      _heightStep(1)
                     {}
  
 };

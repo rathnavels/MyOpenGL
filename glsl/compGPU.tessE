@@ -29,6 +29,7 @@ void main()
 		uvTE						= posTC[0].xy + gl_TessCoord.st/div;
 		res.xz						= uvTE.st * tSize * gridSpacing;
 		res.y						= texture(heightMap, uvTE).r * heightStep;
+      //res.y                       = rand(res.xz) * 15;
 		res.w						= 1.0;
 	
 		gl_Position = mMVP * res;

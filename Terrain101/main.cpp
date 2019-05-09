@@ -13,14 +13,16 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 
+#include "HeightField.h"
+#include "Arcball.h"
+#include "Shader.h"
+
 #define  STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb/stb_image_write.h"
 
 #include <anttweakbar.h>
 
-#include "HeightField.h"
-#include "Arcball.h"
-#include "Shader.h"
+
 
 // settings
 unsigned int SCR_WIDTH = 1280;
@@ -106,10 +108,10 @@ bool initCompGPU()
   glFrontFace(GL_CCW);
 
 
-  if(!hField.createCompGPU("Resources/HeightFields/puket.data",1024,1024))
+  if(!hField.createCompGPU("Resources/HeightFields/KonarValleyDem.tif"))
       return false;
 
-  hField.loadTexture("Resources/Textures/ps_texture_1k.png");
+  hField.loadTexture("Resources/Textures/KonarValleyEye_low.png");
 
   return true;
 }
