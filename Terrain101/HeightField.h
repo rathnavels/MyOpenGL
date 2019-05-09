@@ -68,10 +68,8 @@ public:
   glm::mat4           _mUnitScale;
   glm::mat4           _mDefaultTransform;
 
-  //BYTE hHeightField[1024][1024];
-
-  //unsigned short hHF[1024][1024];
-  short hLoad[1346][1484];
+  
+  
 
   int                 _scaleFactor;
   float               _heightStep;

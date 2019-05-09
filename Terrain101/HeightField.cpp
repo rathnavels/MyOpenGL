@@ -122,14 +122,15 @@ bool HeightField::createCompGPU(char *hFileName)
 
   glm::ivec2 dim = glm::ivec2(hmX,hmZ);
 
+  unsigned short *hLoad = new unsigned short[dem.rows * dem.cols];
+
   for(int y=0; y<dem.rows; y++)
   {
     for(int x=0; x<dem.cols; x++)
     {
-        hLoad[x][y] = ((bd == CV_16U) ? dem.at<signed short>(cv::Point((int)x, (int)y)) : dem.at<float>(cv::Point((int)x, (int)y)));
+        hLoad[(y * dem.cols)+x] = ((bd == CV_16U) ? dem.at<signed short>(cv::Point((int)x, (int)y)) : dem.at<float>(cv::Point((int)x, (int)y)));
     }
   }
-
 
   glGenTextures(1, &heightMaptID);
   glBindTexture(GL_TEXTURE_2D, heightMaptID);
@@ -140,7 +141,7 @@ bool HeightField::createCompGPU(char *hFileName)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, hmX, hmZ, 0, GL_RED, GL_SHORT, hLoad);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, hmX, hmZ, 0, GL_RED, GL_UNSIGNED_SHORT, hLoad);
 
 // check OpenGL error
     GLenum err;
@@ -177,6 +178,8 @@ bool HeightField::createCompGPU(char *hFileName)
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
+
+  delete [] hLoad;
 
   return true;
 }
