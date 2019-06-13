@@ -18,12 +18,14 @@
 class HeightField
 {
 private:
-  int hmX;
-  int hmZ;
+  int rows;
+  int cols;
   unsigned int VBO;
   unsigned int VAO;
   unsigned int IBO;
   unsigned int tID;
+
+  unsigned short _tcRot;
 
   unsigned int heightMaptID;
   unsigned int heightMapPatchVAO;
@@ -38,7 +40,7 @@ public:
 
   void render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot, int outerTess, int innerTess);
 
-  void render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot);
+  void render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot, glm::mat3 &tex = glm::mat3(1));
 
   void bound(const glm::vec3 &v);
 
@@ -49,6 +51,8 @@ public:
   void determine2();
 
   void calculateCenterTransform(glm::vec3 cen);
+
+  void setTexCoordRotation(uint8_t rot = 0) { _tcRot = rot; }
 
   void cacheToGPU();
 
@@ -68,8 +72,10 @@ public:
   glm::mat4           _mUnitScale;
   glm::mat4           _mDefaultTransform;
 
-  
-  
+  float hLoad[1024][1024];
+
+  //unsigned short hHF[1024][1024];
+  //  short hLoad[1346][1484];
 
   int                 _scaleFactor;
   float               _heightStep;
@@ -86,7 +92,7 @@ public:
                       _mUnitScale(glm::mat4(1)),
                       _mDefaultTransform(glm::mat4(1)),
                       _gridSpacing(1),
-                      _heightStep(1)
+                      _heightStep(25)
                     {}
  
 };

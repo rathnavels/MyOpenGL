@@ -54,6 +54,9 @@ bool             innerSwitch            = false;
 int              outerHolder            = 1;
 bool             outerSwitch            = false;
 
+short            rotation               = 0;
+glm::mat3        mtex                   = glm::mat3(1);
+
 
 //---------------------------------------------------------------------
 // setupCamera
@@ -108,12 +111,21 @@ bool initCompGPU()
   glFrontFace(GL_CCW);
 
 
-  if(!hField.createCompGPU("Resources/HeightFields/KonarValleyDem.tif"))
+  if(!hField.createCompGPU("Resources/HeightFields/puket.data"))
       return false;
 
-  hField.loadTexture("Resources/Textures/KonarValleyEye_low.png");
+  hField.loadTexture("Resources/Textures/ps_texture_1k.png");
 
   return true;
+}
+
+//---------------------------------------------------------------------
+// texCoordRotateMatrix
+//--------------------------------------------------------------------- 
+inline void texCoordRotateMatrix(short _tcRot, glm::mat3 &mtex)
+{
+  float angle = 90.0f;
+  mtex = glm::mat3(glm::rotate((_tcRot * angle),glm::vec3(0,1,0)));
 }
 
 //---------------------------------------------------------------------
@@ -216,19 +228,15 @@ TwEventKeyGLFW3(pW, key, scancode, action, mods);
 
   if(action==GLFW_RELEASE)
   {
-    if(key == GLFW_KEY_UP)
+    if(key == GLFW_KEY_RIGHT)
     {
-      tessLevel++;
-
-      if(tessLevel == 9)
-        tessLevel = 1;
+      rotation++;
+      if(rotation == 5) rotation = 0;
     }
-    else if(key == GLFW_KEY_DOWN)
+    else if(key == GLFW_KEY_LEFT)
     {
-      tessLevel--;
-      
-      if(tessLevel == 0)
-        tessLevel = 8;
+      --rotation;
+      if(rotation == -1) rotation = 4;
     }
     else if(key == GLFW_KEY_S)
     {
@@ -272,7 +280,8 @@ void display(GLFWwindow *pWindow)
 
     switchUpdates();
 
-    hField.render(compGPULOD, viewMat, projMat, rotMatrix);
+    texCoordRotateMatrix(rotation, mtex);
+    hField.render(compGPULOD, viewMat, projMat, rotMatrix, mtex);
 
     TwDraw();
     glFlush();

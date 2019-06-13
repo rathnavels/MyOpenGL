@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 
 #include "glad/glad.h"
 #include "GL/GL.h"
@@ -73,9 +74,9 @@ void  HeightField::bound(const glm::vec2 &v)
 //---------------------------------------------------------------------
 void HeightField::calculateCenterTransform(glm::vec3 cen)
 {
-  float oneOverRadius = 1.0f / (hmX * 0.5 * _gridSpacing);
+  float oneOverRadius = 1.0f / (rows * 0.5 * _gridSpacing);
 
-  _mCentralizeTranslate = glm::translate(glm::mat4(1), -glm::vec3(hmX * 0.5 * _gridSpacing , 0 , hmZ * 0.5 * _gridSpacing));
+  _mCentralizeTranslate = glm::translate(glm::mat4(1), -glm::vec3(rows * cen.x * _gridSpacing , 0.0f, cols * cen.z * _gridSpacing));
 
   if (oneOverRadius < 1.0f)
     _mUnitScale = glm::scale(glm::mat4(1), glm::vec3(oneOverRadius * 0.7));
@@ -96,25 +97,39 @@ inline glm::vec2 transformTexCoord(glm::mat3 tT, glm::vec2 tc)
   return tc;
 }
 
+
+
 //---------------------------------------------------------------------
 // createCompGPU
 //---------------------------------------------------------------------
 bool HeightField::createCompGPU(char *hFileName)
 {
   cv::Mat dem = cv::imread(hFileName, cv::IMREAD_LOAD_GDAL | cv::IMREAD_ANYDEPTH);
-  hmX = dem.cols;
-  hmZ = dem.rows;
+  rows = dem.rows;
+  cols = dem.cols;
   int bd = dem.depth();
 
-  glm::ivec2 dim = glm::ivec2(hmX,hmZ);
+  float minHeight = FLT_MAX;  
+  float maxHeight = -FLT_MAX;
 
   float *hLoad = new float[dem.rows * dem.cols];
 
-  for(int y=0; y<dem.rows; y++)
+  for(int y=0; y<rows; y++)
   {
-    for(int x=0; x<dem.cols; x++)
-    {
-        hLoad[(y * dem.cols)+x] = ((bd == CV_16U) ? dem.at<signed short>(cv::Point((int)x, (int)y)) : dem.at<float>(cv::Point((int)x, (int)y)));
+    for(int x=0; x<cols; x++)
+    { 
+       float h = dem.at<float>(cv::Point(x, y));
+         minHeight = std::min(minHeight,h);
+         maxHeight = std::max(maxHeight,h);
+    }
+  }
+
+  for(int y=0; y<rows; y++)
+  {
+    for(int x=0; x<cols; x++)
+    { 
+       float h = dem.at<float>(cv::Point(x, y));
+       hLoad[y][x] = ((h - minHeight)/(maxHeight - minHeight));
     }
   }
 
@@ -137,20 +152,20 @@ bool HeightField::createCompGPU(char *hFileName)
 
   glBindTexture(GL_TEXTURE_2D,0);
 
-  int nopX = hmX / PATCHSIZE;
-  int nopZ = hmZ / PATCHSIZE;
-  int numPatches = nopX * nopZ;
+  int nopRows = rows / PATCHSIZE;
+  int nopCols = cols / PATCHSIZE;
+  int numPatches = nopRows * nopCols;
 
   _scaleFactor = 1;
 
-  for (int x = 0; x < nopX; x++) 
-    for (int z = 0; z < nopX; z++) 
+  for (int y = 0; y < nopRows; y++) 
+    for (int x = 0; x < nopCols; x++) 
     {
-       vertices2.push_back(Vertex2(glm::vec2((float)x * PATCHSIZE/hmX, (float)z * PATCHSIZE/hmZ)));
+       vertices2.push_back(Vertex2(glm::vec2((float)x * PATCHSIZE/cols, (float)y * PATCHSIZE/rows)));
        bound(vertices2.back().vtx);
     }
 
-  calculateCenterTransform(glm::vec3(_vCen2.x , 0.0, _vCen2.y));
+  calculateCenterTransform(glm::vec3(_vCen2.x , 0.0f, _vCen2.y));
   
   glGenVertexArrays(1, &heightMapPatchVAO);
   glBindVertexArray(heightMapPatchVAO);
@@ -165,7 +180,7 @@ bool HeightField::createCompGPU(char *hFileName)
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 
-  delete [] hLoad;
+  //delete [] hLoad;
 
   return true;
 }
@@ -252,7 +267,7 @@ void HeightField::render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::ma
 //---------------------------------------------------------------------
 // render
 //---------------------------------------------------------------------
-void HeightField::render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot)
+void HeightField::render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot, glm::mat3 &tex)
 {
   glm::mat4 mMVP = proj * view * rot * _mDefaultTransform;
 
@@ -263,9 +278,11 @@ void HeightField::render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::ma
   prog->setUniform("scaleFactor",     1);
 
   calculateCenterTransform(glm::vec3(_vCen2.x , 0.0, _vCen2.y));
+  
 
   prog->setUniform("normalMatrix",glm::transpose(glm::inverse(view * rot * _mDefaultTransform)));
   prog->setUniform("mMVP", mMVP);
+  prog->setUniform("mTex", tex);
 
   prog->setSamplerUniform("heightMap", 0);
 

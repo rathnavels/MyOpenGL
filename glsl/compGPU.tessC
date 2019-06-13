@@ -6,7 +6,7 @@ in vec2		posV[];
 
 out vec2	posTC[];
 
-int tessLevel = 4;
+int tessLevel = 1;
 
 void main()
 {

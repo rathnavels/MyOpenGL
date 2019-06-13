@@ -12,6 +12,8 @@ uniform mat4			mMVP;
 in vec2					posTC[];
 out vec2				uvTE;
 
+uniform mat3            mTex;
+
 float rand(vec2 co)
 {
    return fract(sin(dot(co.xy,vec2(12.9898,78.233))) * 43758.5453);
@@ -28,8 +30,7 @@ void main()
 		div							= tSize * 1.0/64.0;
 		uvTE						= posTC[0].xy + gl_TessCoord.st/div;
 		res.xz						= uvTE.st * tSize * gridSpacing;
-		//res.y						= texture(heightMap, uvTE).r * heightStep;
-      res.y                       = rand(res.xz) * 15;
+		res.y						= texture(heightMap, uvTE).r * heightStep * 10;
 		res.w						= 1.0;
 	
 		gl_Position = mMVP * res;
