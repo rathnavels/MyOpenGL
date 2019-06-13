@@ -96,10 +96,10 @@ TwWindowSize(w, h);
 //---------------------------------------------------------------------
 bool initCompGPU()
 {
-  compGPULOD->compileShaderFromFile("glsl/compGPU.vert",   GLSLShader::GLSLShaderType::VERTEX);
-  compGPULOD->compileShaderFromFile("glsl/compGPU.frag",   GLSLShader::GLSLShaderType::FRAGMENT);
-  compGPULOD->compileShaderFromFile("glsl/compGPU.tessC",  GLSLShader::GLSLShaderType::TESS_CONTROL);
-  compGPULOD->compileShaderFromFile("glsl/compGPU.tessE",  GLSLShader::GLSLShaderType::TESS_EVAL);
+  compGPULOD->compileShaderFromFile("glsl/DynamicLOD.ver",   GLSLShader::GLSLShaderType::VERTEX);
+  compGPULOD->compileShaderFromFile("glsl/DynamicLOD.fra",   GLSLShader::GLSLShaderType::FRAGMENT);
+  compGPULOD->compileShaderFromFile("glsl/DynamicLOD.tcs",  GLSLShader::GLSLShaderType::TESS_CONTROL);
+  compGPULOD->compileShaderFromFile("glsl/DynamicLOD.tes",  GLSLShader::GLSLShaderType::TESS_EVAL);
 
   compGPULOD->link();
   compGPULOD->use();
@@ -111,10 +111,10 @@ bool initCompGPU()
   glFrontFace(GL_CCW);
 
 
-  if(!hField.createCompGPU("Resources/HeightFields/puket.data"))
+  if(!hField.createCompGPU("Resources/HeightFields/KonarValleyDem.tif"))
       return false;
 
-  hField.loadTexture("Resources/Textures/ps_texture_1k.png");
+  hField.loadTexture("Resources/Textures/kl.png");
 
   return true;
 }

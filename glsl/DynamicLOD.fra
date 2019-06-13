@@ -1,0 +1,13 @@
+#version 410
+
+uniform mat3				normalMatrix;
+uniform sampler2D			uTexture0;
+uniform sampler2D			heightMap;
+
+in vec2						uvTE;
+out vec4					outputF;
+
+void main()
+{
+	outputF = texture2D(uTexture0, uvTE) * vec4 (0.8,0.8,0.8,1.0);
+}

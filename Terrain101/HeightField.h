@@ -27,6 +27,9 @@ private:
 
   unsigned short _tcRot;
 
+  float minHeight;
+  float maxHeight;
+
   unsigned int heightMaptID;
   unsigned int heightMapPatchVAO;
   unsigned int heightMapPatchVBO;
@@ -37,8 +40,6 @@ public:
   bool createCompGPU(char *hFileName);
 
   void loadTexture(char *tFileName);
-
-  void render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot, int outerTess, int innerTess);
 
   void render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot, glm::mat3 &tex = glm::mat3(1));
 
@@ -54,7 +55,6 @@ public:
 
   void setTexCoordRotation(uint8_t rot = 0) { _tcRot = rot; }
 
-  void cacheToGPU();
 
   glm::vec3           _vMin3;                            ///<    Min Vertex
   glm::vec3           _vMax3;                            ///<    Max Vertex
@@ -72,7 +72,7 @@ public:
   glm::mat4           _mUnitScale;
   glm::mat4           _mDefaultTransform;
 
-  float hLoad[1024][1024];
+  float *hLoad;
 
   //unsigned short hHF[1024][1024];
   //  short hLoad[1346][1484];
