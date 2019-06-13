@@ -180,8 +180,8 @@ bool HeightField::createCompGPU(char *hFileName)
 void HeightField::loadTexture(char *tFileName)
 {
 cv::Mat img         = cv::imread(tFileName);
-int w               = img.cols;
-int h               = img.rows;
+int w               = img.rows;
+int h               = img.cols;
 int comp            = img.channels();
 
   glGenTextures(1, &tID);
