@@ -101,20 +101,6 @@ inline glm::vec2 transformTexCoord(glm::mat3 tT, glm::vec2 tc)
 //---------------------------------------------------------------------
 bool HeightField::createCompGPU(char *hFileName)
 {
-  /*FILE *fp;
-
-  fopen_s(&fp, hFileName, "rb");
-
-  if(fp==NULL)
-    return false;
-
-  fread(hLoad, 1, hX * hZ, fp);
-
-  hmX = hX;
-  hmZ = hZ;
-
-  fclose(fp);*/
-
   cv::Mat dem = cv::imread(hFileName, cv::IMREAD_LOAD_GDAL | cv::IMREAD_ANYDEPTH);
   hmX = dem.cols;
   hmZ = dem.rows;
@@ -122,7 +108,7 @@ bool HeightField::createCompGPU(char *hFileName)
 
   glm::ivec2 dim = glm::ivec2(hmX,hmZ);
 
-  unsigned short *hLoad = new unsigned short[dem.rows * dem.cols];
+  float *hLoad = new float[dem.rows * dem.cols];
 
   for(int y=0; y<dem.rows; y++)
   {
@@ -141,7 +127,7 @@ bool HeightField::createCompGPU(char *hFileName)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, hmX, hmZ, 0, GL_RED, GL_UNSIGNED_SHORT, hLoad);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, hmX, hmZ, 0, GL_RED, GL_FLOAT, hLoad);
 
 // check OpenGL error
     GLenum err;
@@ -276,12 +262,12 @@ void HeightField::render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::ma
   prog->setUniform("gridSpacing",     _gridSpacing);
   prog->setUniform("scaleFactor",     1);
 
-  prog->setSamplerUniform("heightMap", 0);
-
   calculateCenterTransform(glm::vec3(_vCen2.x , 0.0, _vCen2.y));
 
   prog->setUniform("normalMatrix",glm::transpose(glm::inverse(view * rot * _mDefaultTransform)));
   prog->setUniform("mMVP", mMVP);
+
+  prog->setSamplerUniform("heightMap", 0);
 
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, heightMaptID);
