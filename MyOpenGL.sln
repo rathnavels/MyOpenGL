@@ -11,7 +11,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Utility", "Utility\Utility.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Shader", "Shader\Shader.vcxproj", "{D0397DFC-578D-4DD0-9F18-BFC36920C596}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PointCloud101", "PointCloud101\PointCloud101.vcxproj", "{21D40EA8-EF9C-4F01-A26A-A11CCB690642}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PointCloud", "Test\Test.vcxproj", "{A97B337B-87AF-45EF-A600-3949CDBBE5DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,16 +63,16 @@ Global
 		{D0397DFC-578D-4DD0-9F18-BFC36920C596}.Release|x64.Build.0 = Release|x64
 		{D0397DFC-578D-4DD0-9F18-BFC36920C596}.Release|x86.ActiveCfg = Release|Win32
 		{D0397DFC-578D-4DD0-9F18-BFC36920C596}.Release|x86.Build.0 = Release|Win32
-		{21D40EA8-EF9C-4F01-A26A-A11CCB690642}.Debug|ARM.ActiveCfg = Debug|Win32
-		{21D40EA8-EF9C-4F01-A26A-A11CCB690642}.Debug|x64.ActiveCfg = Debug|x64
-		{21D40EA8-EF9C-4F01-A26A-A11CCB690642}.Debug|x64.Build.0 = Debug|x64
-		{21D40EA8-EF9C-4F01-A26A-A11CCB690642}.Debug|x86.ActiveCfg = Debug|Win32
-		{21D40EA8-EF9C-4F01-A26A-A11CCB690642}.Debug|x86.Build.0 = Debug|Win32
-		{21D40EA8-EF9C-4F01-A26A-A11CCB690642}.Release|ARM.ActiveCfg = Release|Win32
-		{21D40EA8-EF9C-4F01-A26A-A11CCB690642}.Release|x64.ActiveCfg = Release|x64
-		{21D40EA8-EF9C-4F01-A26A-A11CCB690642}.Release|x64.Build.0 = Release|x64
-		{21D40EA8-EF9C-4F01-A26A-A11CCB690642}.Release|x86.ActiveCfg = Release|Win32
-		{21D40EA8-EF9C-4F01-A26A-A11CCB690642}.Release|x86.Build.0 = Release|Win32
+		{A97B337B-87AF-45EF-A600-3949CDBBE5DB}.Debug|ARM.ActiveCfg = Debug|Win32
+		{A97B337B-87AF-45EF-A600-3949CDBBE5DB}.Debug|x64.ActiveCfg = Debug|x64
+		{A97B337B-87AF-45EF-A600-3949CDBBE5DB}.Debug|x64.Build.0 = Debug|x64
+		{A97B337B-87AF-45EF-A600-3949CDBBE5DB}.Debug|x86.ActiveCfg = Debug|Win32
+		{A97B337B-87AF-45EF-A600-3949CDBBE5DB}.Debug|x86.Build.0 = Debug|Win32
+		{A97B337B-87AF-45EF-A600-3949CDBBE5DB}.Release|ARM.ActiveCfg = Release|Win32
+		{A97B337B-87AF-45EF-A600-3949CDBBE5DB}.Release|x64.ActiveCfg = Release|x64
+		{A97B337B-87AF-45EF-A600-3949CDBBE5DB}.Release|x64.Build.0 = Release|x64
+		{A97B337B-87AF-45EF-A600-3949CDBBE5DB}.Release|x86.ActiveCfg = Release|Win32
+		{A97B337B-87AF-45EF-A600-3949CDBBE5DB}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
