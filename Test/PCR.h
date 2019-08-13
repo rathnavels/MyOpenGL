@@ -24,8 +24,10 @@ class PCR
 		unsigned int VAO;
 		unsigned int IBO;
 
+    std::vector<GLfloat> vertices;
+
 
 		void loadPointsToGPU(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
-		void render();
+		void render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot, glm::mat3 &tex = glm::mat3(1));
 		PCR();
 };

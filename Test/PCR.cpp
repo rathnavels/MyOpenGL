@@ -1,6 +1,10 @@
 #include "glad/glad.h"
 #include "GL/GL.h"
 
+#include <glm/ext.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/transform.hpp> 
+
 #include <future>
 
 #include "PCR.h"
@@ -10,7 +14,6 @@ void PCR::loadPointsToGPU(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
 {
 	// Set the initial minimum value of each coordinate:
 	float min_x{ 0 }, max_x{ 0 }, min_y{ 0 }, max_y{ 0 }, min_z{ 0 }, max_z{ 0 };
-
 
 	min_x = cloud->points[0].x;
 	min_y = cloud->points[0].y;
@@ -35,7 +38,7 @@ void PCR::loadPointsToGPU(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
 
 	std::size_t v_size = cloud->points.size() * 3; // size of my points
 
-	std::vector<GLfloat> vertices(v_size);
+	vertices.resize(v_size);
 
 	// for efficient data reading, I start a new thread for reading the half of my data.
 	std::future<void> result(std::async([&]()
@@ -63,18 +66,30 @@ void PCR::loadPointsToGPU(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
 	result.get();
 
 	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-
 	glBindVertexArray(VAO);
 
+	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
 
-
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GL_FLOAT), (GLvoid*)0);
+  glEnableVertexAttribArray(0);
+	
+  glBindVertexArray(0);
 }
 
-void PCR::render()
+void PCR::render(Shader *prog, glm::mat4 &view, glm::mat4 &proj, glm::mat4 &rot, glm::mat3 &tex)
 {
+  prog->use();
+
+  glm::mat4 mMVP = proj * view * rot;
+
+  prog->setUniform("normalMatrix",glm::transpose(glm::inverse(view * rot)));
+  prog->setUniform("mMVP", mMVP);
+
+  glBindVertexArray(VAO);
+
+  glDrawArrays(GL_POINTS, 0, vertices.size());
 
 }
 
