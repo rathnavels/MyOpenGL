@@ -19,10 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{A97B337B-87AF-45EF-A600-3949CDBBE5DB}</ProjectGuid>
-    <RootNamespace>Test</RootNamespace>
+    <ProjectGuid>{4488E276-A794-45C7-B7E6-2E30076BDDD0}</ProjectGuid>
+    <RootNamespace>Template</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
-    <ProjectName>PointCloud</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -82,13 +81,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Program Files\PCL 1.8.0\include\pcl-1.8;$(IncludePath);${PCL_INCLUDE_DIRS};C:\Program Files\PCL 1.8.0\3rdParty\Eigen\eigen3;C:\Program Files\PCL 1.8.0\3rdParty\Boost\include\boost-1_61;C:\Program Files\OpenNI2\Include;C:\GoogleDrive\MyLibs\include;C:\GoogleDrive\MyLibs\include\glad\include;$(SolutionDir)\Utility;$(SolutionDir)\Shader</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <Link>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;Shader.lib;AntTweakBar64.lib;opencv_world410d.lib;C:\Program Files\PCL 1.8.0\3rdParty\Boost\lib\libboost_system-vc140-mt-gd-1_61.lib;C:\Program Files\PCL 1.8.0\3rdParty\Boost\lib\libboost_filesystem-vc140-mt-gd-1_61.lib;C:\Program Files\PCL 1.8.0\3rdParty\Boost\lib\libboost_thread-vc140-mt-gd-1_61.lib;C:\Program Files\PCL 1.8.0\3rdParty\Boost\lib\libboost_date_time-vc140-mt-gd-1_61.lib;C:\Program Files\PCL 1.8.0\3rdParty\Boost\lib\libboost_iostreams-vc140-mt-gd-1_61.lib;C:\Program Files\PCL 1.8.0\3rdParty\Boost\lib\libboost_serialization-vc140-mt-gd-1_61.lib;C:\Program Files\PCL 1.8.0\3rdParty\Boost\lib\libboost_chrono-vc140-mt-gd-1_61.lib;C:\Program Files\PCL 1.8.0\3rdParty\Boost\lib\libboost_atomic-vc140-mt-gd-1_61.lib;C:\Program Files\PCL 1.8.0\3rdParty\Boost\lib\libboost_regex-vc140-mt-gd-1_61.lib;C:\Program Files\PCL 1.8.0\lib\pcl_common_debug.lib;C:\Program Files\PCL 1.8.0\lib\pcl_octree_debug.lib;C:\Program Files\OpenNI2\Lib\OpenNI2.lib;C:\Program Files\PCL 1.8.0\lib\pcl_io_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\Shader;C:\GoogleDrive\MyLibs\libs;C:\GoogleDrive\MyLibs\libs\glfw;$(SolutionDir)\Utilities;$(SolutionDir)\x64\Debug;${PCL_LIBRARY_DIRS};C:/Program Files/PCL 1.8.0/lib/$(Configuration);C:/Program Files/PCL 1.8.0/lib</AdditionalLibraryDirectories>
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -117,12 +110,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="C:\GoogleDrive\MyLibs\include\glad\src\glad.c" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="PCR.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="PCR.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
